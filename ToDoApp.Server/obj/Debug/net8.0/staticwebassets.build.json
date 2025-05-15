@@ -1,13 +1,13 @@
 {
   "Version": 1,
-  "Hash": "OMw8DE+MInutxT6NAHr9IGPxirBqyXPaLc8HomdUvZs=",
+  "Hash": "j/uQ/barhF9Ys/AfKDza9O1X11OWp+o4RLm37IOx9MI=",
   "Source": "ToDoApp.Server",
   "BasePath": "_content/ToDoApp.Server",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [
     {
-      "Identity": "E:\\Ramlakhan\\React Project\\ToDoApp\\todoapp.client\\todoapp.client.esproj",
+      "Identity": "E:\\Ramlakhan\\React Project\\ReactApp\\todoapp.client\\todoapp.client.esproj",
       "Version": 2,
       "Source": "todoapp.client",
       "GetPublishAssetsTargets": "GetCurrentProjectPublishStaticWebAssetItems",

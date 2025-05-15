@@ -1,9 +1,21 @@
+using Microsoft.Data.SqlClient; // Add this import for SqlClientFactory  
+using Microsoft.Extensions.DependencyInjection;
+using NPoco;
+using ToDoApp.Server.Contracts;
+using ToDoApp.Server.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// Add services to the container.  
+builder.Services.AddScoped<IDatabase>(provider =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    return new Database(connectionString, DatabaseType.SqlServer2012, SqlClientFactory.Instance); // Pass the connection instead of a string  
+});
+builder.Services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
+builder.Services.AddScoped<ITaskListService, TaskListService>();
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle  
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -12,7 +24,7 @@ var app = builder.Build();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline.  
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
