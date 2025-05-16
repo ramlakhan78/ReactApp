@@ -50,6 +50,10 @@ export default defineConfig({
             '^/weatherforecast': {
                 target,
                 secure: false
+            },
+            '^/TaskList': {
+                target,
+                secure: false
             }
         },
         port: 56115,

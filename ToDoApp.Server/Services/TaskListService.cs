@@ -45,9 +45,12 @@ namespace ToDoApp.Server.Services
             ResponseModel response = new();
             try
             {
+                using var db = database.GetTransaction();
+
                  await database.InsertAsync(taskList);
                 response.IsSuccess = true;
                 response.Message = "Task list added successfully";
+                db.Complete();
             }
             catch (Exception ex)
             {

@@ -1,11 +1,183 @@
-﻿#root {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 2rem;
-    text-align: center;
+﻿
+* {
+    margin: 0;
+    padding: 0;
 }
 
-th, td {
-    padding-left: 1rem;
-    padding-right: 1rem;
+body {
+    background-color: #ebe9e9;
 }
+
+.menu-toggle {
+    height: 70px;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 1000;
+    background-color: #fff;
+    padding: 10px 20px;
+}
+
+    .menu-toggle button {
+        min-width: 40px;
+        cursor: pointer;
+    }
+
+    .menu-toggle span {
+        margin-left: 10px;
+        font-size: 25px;
+    }
+
+.main .sidebarWrapper {
+    padding-top: 20px;
+    width: 20%;
+    flex: 0 0 20%;
+    transition: all 0.3s ease-in-out;
+}
+
+    .main .sidebarWrapper .sidebar {
+        padding-top: 30px;
+        width: 20%;
+        height: 100vh;
+        position: fixed;
+        top: 70px;
+        left: 0px;
+        background-color: #fff;
+    }
+
+
+        .main .sidebarWrapper .sidebar ul li {
+            list-style: none;
+        }
+
+            .main .sidebarWrapper .sidebar ul li .createlist-btn span {
+                margin-left: 10px;
+            }
+
+            .main .sidebarWrapper .sidebar ul li .global-create-btn {
+                margin-bottom: 20px;
+            }
+
+            .main .sidebarWrapper .sidebar ul li button {
+                /*width:100%;*/
+                font-size: 20px;
+                font-weight: 600;
+                border: none;
+            }
+
+            .main .sidebarWrapper .sidebar ul li .submenu {
+                width: 100%;
+            }
+
+
+                .main .sidebarWrapper .sidebar ul li .submenu .submenu-item {
+                    width: 100%;
+                    list-style: none;
+                }
+
+                    .main .sidebarWrapper .sidebar ul li .submenu .submenu-item span {
+                        font-size: 20px
+                    }
+.main {
+    display: flex;
+    align-items: flex-start;
+}
+
+.main .content {
+    width: 80%;
+    margin-top: 70px; 
+    padding: 20px 0px 0px 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden; 
+    min-height: 100vh; 
+}
+
+    .main .content .task-scroll-container {
+        overflow-x: auto;
+        padding-bottom: 10px; /* space for scrollbar */
+    }
+
+        .main .content .task-scroll-container .task-scroll {
+            display: flex;
+            gap: 16px;
+            padding: 10px 0;
+            min-height: 320px; /* Adjust based on card height */
+        }
+
+            .main .content .task-scroll-container .task-scroll .task-card {
+                flex: 0 0 auto;
+                min-width: 500px;
+                background: white;
+                border-radius: 10px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+                padding: 16px;
+                height: 100%; /* match height of container */
+                box-sizing: border-box;
+                position: relative;
+                font-family: Arial, sans-serif;
+            }
+
+
+
+                .main .content .task-scroll-container .task-scroll .task-card .task-card-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+
+                    .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-menu {
+                        cursor: pointer;
+                        font-size: 24px;
+                        padding: 4px 8px;
+                        border-radius: 50%;
+                        user-select: none;
+                        position: relative;
+                    }
+
+                        .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-menu:hover {
+                            background-color: #ebe9e9;
+                        }
+
+                        .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-menu .submenu {
+                            position: absolute;
+                            top: 36px;
+                            right: 8px;
+                            background: #fff;
+                            border-radius: 8px;
+                            box-shadow: 0 2px 6px rgb(0 0 0 / 0.5);
+                            min-width: 220px;
+                            z-index: 1000;
+                            padding: 8px 0;
+                            font-size: 14px;
+                            color: #3c4043;
+                        }
+
+                            .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-menu .submenu .submenu-section {
+                                padding: 0 16px 8px 16px;
+                            }
+
+                                .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-menu .submenu .submenu-section .submenu-title {
+                                    font-weight: 600;
+                                    font-size: 13px;
+                                    margin-bottom: 6px;
+                                    color: black;
+                                }
+
+                                .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-menu .submenu .submenu-section.submenu-item {
+                                    padding: 8px 16px;
+                                    cursor: pointer;
+                                    border-radius: 4px;
+                                }
+
+                                .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-menu .submenu .submenu-item {
+                                    padding: 8px 16px;
+                                    cursor: pointer;
+                                    border-radius: 4px;
+                                }
+
+                            .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-menu .submenu.submenu-divider {
+                                height: 1px;
+                                background-color: #3c4043;
+                                margin: 6px 0;
+                            }
