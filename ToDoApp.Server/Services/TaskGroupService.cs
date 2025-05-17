@@ -3,17 +3,18 @@ using NPoco;
 using ToDoApp.Server.Contracts;
 using ToDoApp.Server.Models;
 using ToDoApp.Server.Models.Entity;
+using static ToDoApp.Server.Contracts.IBaseRepository;
 
 namespace ToDoApp.Server.Services
 {
-    public class TaskListService(IDatabase database) : ITaskListService
+    public class TaskGroupService(IBaseRepository<TaskGroup> taskGroupRepo) : ITaskGroupService
     {
-        public async Task<ResponseModel> GetTaskListsAsync()
+        public async Task<ResponseModel> GetTaskGroupsAsync()
         {
             ResponseModel response = new();
             try
             {
-                response.Data = await database.FetchAsync<TaskList>("SELECT * FROM TaskList").ConfigureAwait(false) ?? new();
+                response.Data = await taskGroupRepo.GetAllAsync().ConfigureAwait(false);
                 response.IsSuccess = true;
             }
             catch (Exception ex)
@@ -24,12 +25,12 @@ namespace ToDoApp.Server.Services
             return response;
         }
 
-        public async Task<ResponseModel> GetTaskListByIdAsync(int id)
+        public async Task<ResponseModel> GetTaskGroupByIdAsync(int id)
         {
             ResponseModel response = new();
             try
             {
-                response.Data = await database.SingleOrDefaultAsync<TaskList>("SELECT * FROM TaskList WHERE ListId = @0", id) ?? new();
+                response.Data = await taskGroupRepo.GetByIdAsync(id).ConfigureAwait(false) ?? new();
                 response.IsSuccess = true;
             }
             catch (Exception ex)
@@ -40,17 +41,14 @@ namespace ToDoApp.Server.Services
             return response;
         }
 
-        public async Task<ResponseModel> AddTaskListAsync(TaskList taskList)
+        public async Task<ResponseModel> AddTaskGroupAsync(TaskGroup model)
         {
             ResponseModel response = new();
             try
             {
-                using var db = database.GetTransaction();
-
-                 await database.InsertAsync(taskList);
+                 await taskGroupRepo.UpdateAsync(model);
                 response.IsSuccess = true;
-                response.Message = "Task list added successfully";
-                db.Complete();
+                response.Message = "Task Group added successfully";
             }
             catch (Exception ex)
             {

@@ -3,27 +3,27 @@ using ToDoApp.Server.Models.Entity;
 
 namespace ToDoApp.Server.Contracts
 {
-    public interface ITaskListService
+    public interface ITaskGroupService
     {
         /// <summary>
-        /// Get all task lists
+        /// Get all task Groups
         /// </summary>
         /// <returns>return response <see cref="ResponseModel"/></returns>
-       Task<ResponseModel> GetTaskListsAsync();
+        Task<ResponseModel> GetTaskGroupsAsync();
 
         /// <summary>
-        /// Get task list by id
+        /// Get task group by id
         /// </summary>
         /// <param name="id"></param>
         /// <returns>return response <see cref="ResponseModel"/></returns>
-        Task<ResponseModel> GetTaskListByIdAsync(int id);
+        Task<ResponseModel> GetTaskGroupByIdAsync(int id);
 
         /// <summary>
-        /// Add a new task list
+        /// Add a new task group
         /// </summary>
         /// <param name="taskList"></param>
         /// <returns>return response <see cref="ResponseModel"/></returns>
-        Task<ResponseModel> AddTaskListAsync(TaskList taskList);
+        Task<ResponseModel> AddTaskGroupAsync(TaskGroup model);
 
     }
 }

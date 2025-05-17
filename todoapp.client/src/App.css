@@ -117,7 +117,16 @@ body {
                 position: relative;
                 font-family: Arial, sans-serif;
             }
+                .main .content .task-scroll-container .task-scroll .task-card .add-task-button {
+                    border: none;
+                    width: 100%;
+                    text-align: left;
+                    color: #0536f6;
+                }
 
+                    .main .content .task-scroll-container .task-scroll .task-card .add-task-button .add-task-check {
+                        width:40px;
+                    }
 
 
                 .main .content .task-scroll-container .task-scroll .task-card .task-card-header {
@@ -126,7 +135,7 @@ body {
                     align-items: center;
                 }
 
-                    .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-menu {
+                    .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-group-menu {
                         cursor: pointer;
                         font-size: 24px;
                         padding: 4px 8px;
@@ -135,11 +144,13 @@ body {
                         position: relative;
                     }
 
-                        .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-menu:hover {
+
+
+                        .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-group-menu:hover {
                             background-color: #ebe9e9;
                         }
 
-                        .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-menu .submenu {
+                        .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-group-menu .submenu {
                             position: absolute;
                             top: 36px;
                             right: 8px;
@@ -153,31 +164,69 @@ body {
                             color: #3c4043;
                         }
 
-                            .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-menu .submenu .submenu-section {
+                            .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-group-menu .submenu .submenu-section {
                                 padding: 0 16px 8px 16px;
                             }
 
-                                .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-menu .submenu .submenu-section .submenu-title {
+                                .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-group-menu .submenu .submenu-section .submenu-title {
                                     font-weight: 600;
                                     font-size: 13px;
                                     margin-bottom: 6px;
                                     color: black;
                                 }
 
-                                .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-menu .submenu .submenu-section.submenu-item {
+                                .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-group-menu .submenu .submenu-section.submenu-item {
                                     padding: 8px 16px;
                                     cursor: pointer;
                                     border-radius: 4px;
                                 }
 
-                                .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-menu .submenu .submenu-item {
-                                    padding: 8px 16px;
-                                    cursor: pointer;
-                                    border-radius: 4px;
-                                }
+                            .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-group-menu .submenu .submenu-item {
+                                padding: 4px 16px;
+                                cursor: pointer;
+                                border-radius: 4px;
+                            }
 
-                            .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-menu .submenu.submenu-divider {
+                            .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-group-menu .submenu.submenu-divider {
                                 height: 1px;
-                                background-color: #3c4043;
+                                background-color: gray;
                                 margin: 6px 0;
                             }
+
+                .main .content .task-scroll-container .task-scroll .task-card .task-card-body .row .col-2 .task-menu {
+                    cursor: pointer;
+                    font-size: 24px;
+                    padding: 4px 8px;
+                    border-radius: 50%;
+                    user-select: none;
+                    position: relative;
+                }
+
+
+
+                    .main .content .task-scroll-container .task-scroll .task-card .task-card-body .row .col-2 .task-menu:hover {
+                        background-color: #ebe9e9;
+                    }
+
+                    .main .content .task-scroll-container .task-scroll .task-card .task-card-body .row .col-2 .task-menu .tasksubmenu {
+                        position: absolute;
+                        top: 36px;
+                        right: 8px;
+                        background: #fff;
+                        border-radius: 8px;
+                        box-shadow: 0 2px 6px rgb(0 0 0 / 0.5);
+                        min-width: 220px;
+                        z-index: 1000;
+                        padding: 8px 0;
+                        font-size: 14px;
+                        color: #3c4043;
+                    }
+
+                    .main .content .task-scroll-container .task-scroll .task-card .task-card-body .row .col-2 .task-menu .tasksubmenu .tasksubmenu-section {
+                        background-color: #ebe9e9;
+                    }
+                    .main .content .task-scroll-container .task-scroll .task-card .task-card-body .row .col-2 .task-menu .tasksubmenu .tasksubmenu-item {
+                        padding: 8px 16px;
+                        cursor: pointer;
+                        border-radius: 4px;
+                    }

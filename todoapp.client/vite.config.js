@@ -51,7 +51,7 @@ export default defineConfig({
                 target,
                 secure: false
             },
-            '^/TaskList': {
+            '^/TaskGroups': {
                 target,
                 secure: false
             }
