@@ -21,8 +21,8 @@ public class TaskGroupsController(ITaskGroupService taskListService) : Controlle
     #endregion [Get Task Group By Id]
 
     #region [Add Task Group]
-    [HttpPost("add-group")]
-    public async Task<IActionResult> Post([FromBody] TaskGroup model) =>Ok(await taskListService.AddTaskGroupAsync(model));
+    [HttpPost("save-group")]
+    public async Task<IActionResult> Post([FromBody] TaskGroup model) =>Ok(await taskListService.AddOrUpdateTaskGroupAsync(model));
 
     #endregion [Add Task Group]
 }

@@ -40,6 +40,13 @@ namespace ToDoApp.Server.Contracts
             /// <returns></returns>
             Task DeleteAsync(int id);
 
+            /// <summary>
+            /// get result by query asynchronously.
+            /// </summary>
+            /// <param name="query"></param>
+            /// <returns></returns>
+            Task<IEnumerable<T>> QueryAsync(string sql, params object[] args);
+
         }
     }
 }

@@ -41,14 +41,24 @@ namespace ToDoApp.Server.Services
             return response;
         }
 
-        public async Task<ResponseModel> AddTaskGroupAsync(TaskGroup model)
+        public async Task<ResponseModel> AddOrUpdateTaskGroupAsync(TaskGroup model)
         {
             ResponseModel response = new();
             try
             {
-                 await taskGroupRepo.UpdateAsync(model);
+                if (model.ListId == 0)
+                {
+
+                    await taskGroupRepo.AddAsync(model);
+                    response.Message = "Task Group added successfully";
+                }
+                else
+                {
+
+                    await taskGroupRepo.UpdateAsync(model);
+                    response.Message = "Task Group updated successfully";
+                }
                 response.IsSuccess = true;
-                response.Message = "Task Group added successfully";
             }
             catch (Exception ex)
             {

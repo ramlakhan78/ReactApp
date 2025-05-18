@@ -3,11 +3,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { ChevronDown, ChevronUp, Plus } from 'lucide-react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import { addGroup, getAllGroupList } from '@/api/taskGroupApi';
+import { SaveGroup, GetAllGroupList } from '@/api/TaskGroupApi';
 
 export default function Sidebar() {
     const [isCollapse, setIsCollapse] = useState(false);
-    const [taskGroups, setTaskGroups] = useState([{ listId: 0, listName: '' }]);
+    const [taskGroups, setTaskGroups] = useState([]);
     const [show, setShow] = useState(false);
 
     const [GroupInputValue, setGroupInputValue] = useState('');
@@ -30,7 +30,7 @@ export default function Sidebar() {
     const handleAdd = async () => {
         if (GroupInputValue) {
             try {
-                const result = await addGroup({ listId: 0, listName: GroupInputValue });
+                const result = await SaveGroup({ listId: 0, listName: GroupInputValue, IsEnableShow: true });
                 getAllGroups();
                 alert(result.message);
                 setGroupInputValue('');
@@ -46,7 +46,7 @@ export default function Sidebar() {
     /*Get All Groups*/
     const getAllGroups = async () => {
 
-        const allGroups = await getAllGroupList();
+        const allGroups = await GetAllGroupList();
         if (allGroups.data && allGroups.data.length > 0) {
             setTaskGroups(allGroups.data);
         }
@@ -54,12 +54,11 @@ export default function Sidebar() {
 
     /*handle add list*/
     const handleErrorAddGroup = (value) => {
+        setGroupInputValue(value);
         if (!value) {
             setIsShowError(true);
-            setGroupInputValue('');
         } else {
             setIsShowError(false);
-            setGroupInputValue(value);
         }
     }
 
@@ -79,7 +78,7 @@ export default function Sidebar() {
                     <ul className={`submenu ${isCollapse == true ? 'collapse' : ''}`}>
                         {taskGroups.length > 0 &&
                             taskGroups.map(item => (
-                                <li key={item.listId} className="submenu-item"> <input className="checkinput" type="checkbox" /> <span>{item.listName}</span> </li>
+                                <li key={item.listId} className="submenu-item"> <input className="checkinput" type="checkbox" checked={item.isEnableShow} onChange={() => !item.isEnableShow} /> <span>{item.listName}</span> </li>
                             ))
                         }
                     </ul>
@@ -94,7 +93,7 @@ export default function Sidebar() {
             {/* model for add list */}
             <Modal show={show} onHide={() => setShow(false)}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Add List</Modal.Title>
+                    <Modal.Title>Add task Group</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     Name: <input type="text" className="form-control" onChange={(e) => handleErrorAddGroup(e.target.value)} />

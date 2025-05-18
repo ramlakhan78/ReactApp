@@ -19,11 +19,11 @@ namespace ToDoApp.Server.Contracts
         Task<ResponseModel> GetTaskGroupByIdAsync(int id);
 
         /// <summary>
-        /// Add a new task group
+        /// Add or update a task group
         /// </summary>
         /// <param name="taskList"></param>
         /// <returns>return response <see cref="ResponseModel"/></returns>
-        Task<ResponseModel> AddTaskGroupAsync(TaskGroup model);
+        Task<ResponseModel> AddOrUpdateTaskGroupAsync(TaskGroup model);
 
     }
 }

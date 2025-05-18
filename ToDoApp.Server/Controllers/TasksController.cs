@@ -23,16 +23,22 @@ public class TasksController(ITaskService taskService) : ControllerBase
 
     #endregion [Get Task By Id]
 
-    #region [Get Task By Group Id]
-    [HttpPost("add-task")]
-    public async Task<ResponseModel> Post([FromBody] TasksDto model) => await taskService.AddTaskAsync(model);
+    #region [Add or Update task]
+    [HttpPost("save-task")]
+    public async Task<ResponseModel> Post([FromBody] TasksDto model) => await taskService.AddOrUpdateTaskAsync(model);
 
-    #endregion [Get Task By Group Id]
+    #endregion [Add or Update task]
 
-    #region [Update Task]
+    #region [Delete Task]
     [HttpDelete("delete/{id}")]
     public async Task<ResponseModel> Delete(int id) => await taskService.DeleteAsync(id);
 
-    #endregion [Update Task]
+    #endregion [Delete Task]
+
+    #region [Get Task By Group Id]
+    [HttpGet("get-taskList-by-groupId/{groupId}")]
+    public async Task<ResponseModel> GetAllTaskByGroupId(int groupId) => await taskService.GetAllTaskByGroupId(groupId);
+    #endregion [Get Task By Group Id]
+
 }
 

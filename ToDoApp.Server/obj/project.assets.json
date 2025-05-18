@@ -2335,25 +2335,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\s5\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "C:\\Users\\A\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\Ramlakhan\\React Project\\ReactApp\\ToDoApp.Server\\ToDoApp.Server.csproj",
+      "projectUniqueName": "E:\\React Project\\ReactApp\\ToDoApp.Server\\ToDoApp.Server.csproj",
       "projectName": "ToDoApp.Server",
-      "projectPath": "E:\\Ramlakhan\\React Project\\ReactApp\\ToDoApp.Server\\ToDoApp.Server.csproj",
-      "packagesPath": "C:\\Users\\s5\\.nuget\\packages\\",
-      "outputPath": "E:\\Ramlakhan\\React Project\\ReactApp\\ToDoApp.Server\\obj\\",
+      "projectPath": "E:\\React Project\\ReactApp\\ToDoApp.Server\\ToDoApp.Server.csproj",
+      "packagesPath": "C:\\Users\\A\\.nuget\\packages\\",
+      "outputPath": "E:\\React Project\\ReactApp\\ToDoApp.Server\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\s5\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\A\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -2362,8 +2360,7 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "https://api.nuget.org/v3/index.json": {},
-        "https://nuget.devexpress.com/XfpA3kYfSfKbTOOJkBuYPXjMpYngSoBgDqk4XtVJeguNZ9ak3H/api/v3/index.json": {}
+        "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net8.0": {
@@ -2379,9 +2376,9 @@
       "restoreAuditProperties": {
         "enableAudit": "true",
         "auditLevel": "low",
-        "auditMode": "all"
+        "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.100"
+      "SdkAnalysisLevel": "9.0.300"
     },
     "frameworks": {
       "net8.0": {
@@ -2427,7 +2424,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

@@ -40,5 +40,10 @@ namespace ToDoApp.Server.Services
             transaction.Complete();
         }
 
+        public async Task<IEnumerable<T>> QueryAsync(string sql, params object[] args)
+        {
+            return await database.FetchAsync<T>(sql, args);
+        }
+
     }
 }

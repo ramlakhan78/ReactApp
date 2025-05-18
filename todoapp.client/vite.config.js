@@ -54,6 +54,10 @@ export default defineConfig({
             '^/TaskGroups': {
                 target,
                 secure: false
+            },
+            '^/Tasks': {
+                target,
+                secure: false
             }
         },
         port: 56115,
