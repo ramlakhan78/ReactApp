@@ -41,3 +41,21 @@ export const GetTasksByGroupId = async (groupId) => {
     }
     return response.json();
 }
+
+export const GetAllGroupsTaskList = async () => {
+    const response = await fetch(`${BASE_URL}/get-all-groups-taskList`);
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+}
+
+export const ToggleStarTask = async (taskId) => {
+    const response = await fetch(`${BASE_URL}/toggle-star/${taskId}`, {
+        method:'PUT'
+    });
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+};

@@ -25,3 +25,13 @@ export const GetAllGroupList = async () => {
 
     return response.json();
 };
+
+export const GetGroupById = async (id) => {
+    const response = await fetch(`${BASE_URL}/${id}`);
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return response.json();
+};

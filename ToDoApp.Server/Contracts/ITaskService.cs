@@ -42,5 +42,17 @@ namespace ToDoApp.Server.Contracts
         /// <returns>A <see cref="Task{TResult}"/> representing the asynchronous operation.  The result contains a <see
         /// cref="ResponseModel"/> object that includes the list of tasks associated with the group ID.</returns>
         Task<ResponseModel> GetAllTaskByGroupId(int groupId);
+
+        /// <summary>
+        /// Retrieves all task groups along with their associated tasks.
+        /// </summary>
+        /// <returns></returns>
+        Task<ResponseModel> GetAllGroupWithTaskListAsync();
+
+        /// <summary>
+        /// update task for starred task
+        /// </summary>
+        /// <returns></returns>
+        Task<ResponseModel> ToggleStarTaskAsync(int taskId);
     }
 }

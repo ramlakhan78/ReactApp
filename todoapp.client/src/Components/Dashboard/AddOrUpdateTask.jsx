@@ -2,64 +2,59 @@ import { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-import { GetAllGroupList } from '@/api/taskGroupApi';
+/*import { GetAllGroupList } from '@/api/taskGroupApi';*/
 import { GetTaskById } from '@/api/taskApi';
-import { FormateDate } from '../../../global/Helper'
+import { FormateDate } from '../../global/Helper';
 
 
-const AddOrUpdateTask = ({ show, setShow, onAddOrEdit, taskId }) => {
+const AddOrUpdateTask = ({ show, setShow, onAddOrEdit, editTaskId, setEditTaskId, taskGroupId }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [date, setDate] = useState(FormateDate(new Date()));
-    const [groupId, setgroupId] = useState(0);
-    const [taskGroups, setTaskGroups] = useState([{ listId: 0, listName: '' }]);
+    const [date, setDate] = useState(null);
     const [isShowError, setIsShowError] = useState(false);
     const [editTaskItem, setEditTaskItem] = useState([]);
 
 
     useEffect(() => {
+        console.log(editTaskId);
         (async () => {
-            const allGroup = await GetAllGroupList();
-            console.log(allGroup);
-            setTaskGroups(allGroup.data);
-
-            if (taskId > 0) {
-                let res = await GetTaskById(taskId);
+            if (editTaskId > 0) {
+                let res = await GetTaskById(editTaskId);
                 if (res.isSuccess) {
                     let itemToEdit = res.data;
                     setTitle(itemToEdit.title);
                     setDescription(itemToEdit.description);
                     setDate(itemToEdit.toDoDate);
-                    setgroupId(itemToEdit.taskGroupId);
                     setEditTaskItem(itemToEdit);
                 }
             }
 
-            // set default group id to first group id
-            if (allGroup.data && allGroup.data.length > 0) {
-                setgroupId(allGroup.data[0].listId);
-            }
         })();
     }, []);
 
+    const handleClose = () => {
+        setEditTaskId(0);
+        setShow(false);
+    }
+
     const handleSubmit = () => {
         let itemToAddOrEdit = {};
-        if (taskId > 0) {
-            itemToAddOrEdit = { ...editTaskItem, title: title, description: description, toDoDate: date };
+        const toDoDate = date ? date : null;
+        if (editTaskId > 0) {
+            itemToAddOrEdit = { ...editTaskItem, title: title, description: description, toDoDate: toDoDate };
         } else {
-            itemToAddOrEdit = { taskId: 0, title: title, description: description, toDoDate: date, taskGroupId: groupId };
+            itemToAddOrEdit = { taskId: 0, title: title, description: description, toDoDate: date, taskGroupId: taskGroupId };
         }
 
         onAddOrEdit(itemToAddOrEdit);
         EmptyAllFields();
-        setShow(false)
+        setShow(false);
     }
 
     const EmptyAllFields = () => {
         setTitle('');
         setDescription('');
-        setDate(FormateDate(new Date()));
-        setgroupId(0);
+        setDate(null);
     }
 
     const HendleErrorAndSetTitleValue = (e) => {
@@ -74,9 +69,9 @@ const AddOrUpdateTask = ({ show, setShow, onAddOrEdit, taskId }) => {
 
     return (
 
-        <Modal show={show} onHide={() => setShow(false)}>
+        <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
-                <Modal.Title>{taskId > 0 ? "Edit task" : "Add task"}</Modal.Title>
+                <Modal.Title>{editTaskId > 0 ? "Edit task" : "Add task"}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form>
@@ -115,7 +110,7 @@ const AddOrUpdateTask = ({ show, setShow, onAddOrEdit, taskId }) => {
                             type="Date"
                         />
                     </Form.Group>
-                    {
+                    {/*{
                         taskId > 0 ?
 
                             <Form.Group className="mb-3" controlId="exampleForm.ControlInput3">
@@ -128,12 +123,12 @@ const AddOrUpdateTask = ({ show, setShow, onAddOrEdit, taskId }) => {
                                 </Form.Select>
                             </Form.Group>
                             : ''
-                    }
+                    }*/}
 
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={() => setShow(false)}>
+                <Button variant="secondary" onClick={handleClose}>
                     Close
                 </Button>
                 <Button variant="primary" onClick={handleSubmit} disabled={!title.trim()}>

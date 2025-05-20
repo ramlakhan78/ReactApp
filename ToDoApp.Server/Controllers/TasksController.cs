@@ -2,7 +2,6 @@
 using ToDoApp.Server.Contracts;
 using ToDoApp.Server.Models;
 using ToDoApp.Server.Models.Entity;
-using static ToDoApp.Server.Contracts.IBaseRepository;
 
 namespace ToDoApp.Server.Controllers;
 
@@ -39,6 +38,18 @@ public class TasksController(ITaskService taskService) : ControllerBase
     [HttpGet("get-taskList-by-groupId/{groupId}")]
     public async Task<ResponseModel> GetAllTaskByGroupId(int groupId) => await taskService.GetAllTaskByGroupId(groupId);
     #endregion [Get Task By Group Id]
+
+    #region [Get All Group With Their Task]
+    [HttpGet("get-all-groups-taskList")]
+    public async Task<ResponseModel> GetAllGroupsTaskListAsync() => await taskService.GetAllGroupWithTaskListAsync();
+
+    #endregion [Get All Group With Their Task ]
+
+    #region [Toggle Star Task]
+    [HttpPut("toggle-star/{taskId}")]
+    public async Task<ResponseModel> ToggleStarTask(int taskId) => await taskService.ToggleStarTaskAsync(taskId);
+    #endregion [Toggle Star Task]
+
 
 }
 

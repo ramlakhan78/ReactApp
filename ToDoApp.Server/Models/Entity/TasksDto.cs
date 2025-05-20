@@ -9,7 +9,7 @@ namespace ToDoApp.Server.Models.Entity
         public int TaskId { get; set; }
         public string? Title { get; set; }
         public string? Description { get; set; }
-        public DateTime ToDoDate { get; set; }
+        public DateTime? ToDoDate { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime? CompleteDate { get; set; }
         public bool IsStarred { get; set; }
