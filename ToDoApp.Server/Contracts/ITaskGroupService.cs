@@ -25,5 +25,12 @@ namespace ToDoApp.Server.Contracts
         /// <returns>return response <see cref="ResponseModel"/></returns>
         Task<ResponseModel> AddOrUpdateTaskGroupAsync(TaskGroup model);
 
+        /// <summary>
+        /// delete task group 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<ResponseModel> DeleteGroupAsync(int id);
+
     }
 }

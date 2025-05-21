@@ -68,6 +68,10 @@ public class TaskService(IBaseRepository<TasksDto> taskRepo, IBaseRepository<Tas
             }
             else
             {
+                if (task.IsCompleted)
+                    task.CompleteDate = DateTime.Now;
+                else
+                    task.CompleteDate = null;
                 await taskRepo.UpdateAsync(task);
                 response.Message = "task updated successfully!!";
             }
@@ -137,8 +141,13 @@ public class TaskService(IBaseRepository<TasksDto> taskRepo, IBaseRepository<Tas
             {
                 GroupId = group.ListId,
                 GroupName = group.ListName,
+                SortBy =group.SortBy,
                 isEnableShow = group.IsEnableShow,
-                TaskList = taskList.Where(x => x.TaskGroupId == group.ListId && !x.IsCompleted).ToList(),
+                TaskList = taskList.Where(x => x.TaskGroupId == group.ListId && !x.IsCompleted)
+                                   .OrderBy(x=> group.SortBy == "Title" ? x.Title :
+                                   group.SortBy == "Date" ? x.ToDoDate.ToString() :
+                                   group.SortBy == "Description" ? x.Description :
+                                   x.TaskId.ToString()).ToList(),
                 CompletedTaskList = taskList.Where(x => x.TaskGroupId == group.ListId && x.IsCompleted).ToList()
             }).ToList();
             response.IsSuccess = true;
@@ -178,5 +187,61 @@ public class TaskService(IBaseRepository<TasksDto> taskRepo, IBaseRepository<Tas
         }
         return response;
 
+    }
+
+    public async Task<ResponseModel> GetStarredTaskAsync()
+    {
+        ResponseModel response = new();
+        try
+        {
+            var group = await taskGroupRepo.GetByIdAsync(1).ConfigureAwait(false);
+            var starredTasks = await taskRepo.GetAllAsync().ConfigureAwait(false);
+            response.Data = new GroupTaskListVM
+            {
+                GroupId = group.ListId,
+                GroupName = "starred tasks",
+                SortBy = group.SortBy,
+                TaskList = starredTasks.Where(x => x.IsStarred && !x.IsCompleted)
+                                   .OrderBy(x => group.SortBy == "Title" ? x.Title :
+                                   group.SortBy == "Date" ? x.ToDoDate.ToString() :
+                                   group.SortBy == "Description" ? x.Description :
+                                   x.TaskId.ToString()).ToList(),
+                CompletedTaskList = []
+            };
+            response.IsSuccess = true;
+        }
+        catch (Exception ex)
+        {
+            response.IsSuccess = false;
+            response.Message = ex.Message;
+        }
+        return response;
+    }
+
+    public async Task<ResponseModel> DeleteCompletedTaskAsync(int groupId)
+    {
+        ResponseModel response = new();
+        try
+        {
+            var completedTasks = await taskRepo.QueryAsync("Select * from Task where TaskGroupId =@0 and IsCompleted =1", groupId).ConfigureAwait(false);
+            foreach (var task in completedTasks)
+            {
+                try
+                {
+                    await taskRepo.DeleteAsync(task.TaskId);
+                }
+                catch (Exception)
+                {
+                }
+            }
+            response.IsSuccess = true;
+            response.Message = "Completed tasks deleted successfully";
+        }
+        catch (Exception ex)
+        {
+            response.IsSuccess = false;
+            response.Message = ex.Message;
+        }
+        return response;
     }
 }

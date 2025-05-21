@@ -1,3 +1,7 @@
+import { useContext } from 'react';
+import { Context } from './MyContext';
+import { useLocation } from "react-router-dom";
+
 export const FormateDate = (date) => {
     const formattedDate = new Date(date).toLocaleDateString("en-US", {
         weekday: "short",  // "Thu"
@@ -8,6 +12,15 @@ export const FormateDate = (date) => {
     return formattedDate;
 }
 
+export const GetPath = () => {
+    const location = useLocation();
+    return location.pathname;
+}
+
+
+export const UseAllGroupTaskList = () =>{
+    return useContext(Context).allGroupTaskList;
+}
 
 
  

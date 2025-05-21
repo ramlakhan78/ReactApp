@@ -2,9 +2,7 @@ import { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-/*import { GetAllGroupList } from '@/api/taskGroupApi';*/
 import { GetTaskById } from '@/api/taskApi';
-import { FormateDate } from '../../global/Helper';
 
 
 const AddOrUpdateTask = ({ show, setShow, onAddOrEdit, editTaskId, setEditTaskId, taskGroupId }) => {
@@ -16,7 +14,6 @@ const AddOrUpdateTask = ({ show, setShow, onAddOrEdit, editTaskId, setEditTaskId
 
 
     useEffect(() => {
-        console.log(editTaskId);
         (async () => {
             if (editTaskId > 0) {
                 let res = await GetTaskById(editTaskId);
@@ -69,7 +66,7 @@ const AddOrUpdateTask = ({ show, setShow, onAddOrEdit, editTaskId, setEditTaskId
 
     return (
 
-        <Modal show={show} onHide={handleClose}>
+        <Modal show={show} onHide={() => handleClose()}>
             <Modal.Header closeButton>
                 <Modal.Title>{editTaskId > 0 ? "Edit task" : "Add task"}</Modal.Title>
             </Modal.Header>
@@ -128,7 +125,7 @@ const AddOrUpdateTask = ({ show, setShow, onAddOrEdit, editTaskId, setEditTaskId
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>
+                <Button variant="secondary" onClick={()=> handleClose()}>
                     Close
                 </Button>
                 <Button variant="primary" onClick={handleSubmit} disabled={!title.trim()}>

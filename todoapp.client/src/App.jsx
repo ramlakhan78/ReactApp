@@ -1,20 +1,26 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Sidebar from "./Components/Sidebar/Sidebar";
 import '../src/App.css';
 import Dashboard from './Components/Dashboard/Dashboard'
-import Header from './Components/Header/Header';
+import Starred from './Components/StarTask/Starred';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { MyContextProvider } from './global/MyContext';
+import Layout from './global/Layout';
 
 function App() {
 
     return (
-        <MyContextProvider>
-            <Header />
-            <div className="d-flex main">
-                <Sidebar />
-                <Dashboard />
-            </div>
-        </MyContextProvider>
+
+        <BrowserRouter>
+            <MyContextProvider>
+                <Routes>
+                    <Route path="/" element={ <Layout></Layout> } />
+
+                    <Route path="/dashboard" element={ <Layout> <Dashboard /> </Layout>} />
+
+                    <Route path="/dashboard/starred" element={ <Layout> <Starred /> </Layout>} />
+                </Routes>
+            </MyContextProvider>
+        </BrowserRouter>
     );
 
 }

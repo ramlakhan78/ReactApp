@@ -67,5 +67,22 @@ namespace ToDoApp.Server.Services
             }
             return response;
         }
+
+        public async Task<ResponseModel> DeleteGroupAsync(int id)
+        {
+            ResponseModel response = new();
+            try
+            {
+                await taskGroupRepo.DeleteAsync(id);
+                response.IsSuccess = true;
+                response.Message = "Task Group deleted successfully";
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
     }
 }

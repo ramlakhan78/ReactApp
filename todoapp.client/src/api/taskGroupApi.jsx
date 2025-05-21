@@ -35,3 +35,14 @@ export const GetGroupById = async (id) => {
 
     return response.json();
 };
+
+export const DeleteGroup = async (id) => {
+    const response = await fetch(`${BASE_URL}/delete/${id}`, {
+        method: 'DELETE',
+    });
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+}
+

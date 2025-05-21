@@ -1,24 +1,33 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { GetAllGroupList } from '../api/TaskGroupApi';
-import { GetAllGroupsTaskList } from '@/api/TaskApi';
+import { GetAllGroupsTaskList, GetStarredTask } from '@/api/TaskApi';
 
 export const Context = createContext();
 
 export const MyContextProvider = ({ children }) => {
     const [taskGroups, setTaskGroups] = useState([]);
     const [allGroupTaskList, setAllGroupTaskList] = useState([]);
+    const [allStarredTasks, setallStarredTasks] = useState({});
 
     useEffect(() => {
         (async () => {
             await getAllGroups();
             await getAllGroupsTask();
+            await getStarredTask();
         })();
     }, []);
 
+    const getStarredTask = async () => {
+        const res = await GetStarredTask();
+        if (res.isSuccess) {
+            setallStarredTasks(res.data);
+        }
+    };
+
     const getAllGroups = async () => {
-        const allGroups = await GetAllGroupList();
-        if (allGroups.data && allGroups.data.length > 0) {
-            setTaskGroups(allGroups.data);
+        const res = await GetAllGroupList();
+        if (res.isSuccess) {
+            setTaskGroups(res.data);
         }
     };
 
@@ -32,9 +41,9 @@ export const MyContextProvider = ({ children }) => {
     };
 
     return (
-        <Context.Provider value={{ taskGroups, setTaskGroups, allGroupTaskList, setAllGroupTaskList }}>
-        {children}
-    </Context.Provider>
+        <Context.Provider value={{ taskGroups, setTaskGroups, allGroupTaskList, setAllGroupTaskList, allStarredTasks, setallStarredTasks }}>
+            {children}
+        </Context.Provider>
     );
 
 }  

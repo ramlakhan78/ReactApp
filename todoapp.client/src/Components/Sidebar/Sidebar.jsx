@@ -1,60 +1,39 @@
 ﻿import { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { ChevronDown, ChevronUp, Plus } from 'lucide-react';
+import { ChevronDown, ChevronUp, Plus, Star, CircleCheckBig } from 'lucide-react';
+import { Link } from "react-router-dom";
 import { useContext } from 'react';
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
 import { SaveGroup, GetAllGroupList, GetGroupById } from '@/api/TaskGroupApi';
 import { GetAllGroupsTaskList } from '@/api/TaskApi';
 import { Context } from '../../global/MyContext';
+import { GetPath } from '../../global/Helper';
+import AddOrUpdateGroups from './AddOrUpdateGroups';
+
 export default function Sidebar() {
 
     const { taskGroups, setTaskGroups, setAllGroupTaskList } = useContext(Context);
-
     const [isCollapse, setIsCollapse] = useState(false);
     const [show, setShow] = useState(false);
-    const [GroupInputValue, setGroupInputValue] = useState('');
-    const [isShowError, setIsShowError] = useState(false);
+
+    /* Add Group */
+    const handleAddorEdit = async (item) => {
+        try {
+            const result = await SaveGroup(item);
+            if (result.isSuccess) {
+
+                updateTaskGroups();
+            }
+        } catch (error) {
+            console.error('Error creating list:', error);
+        }
+    }
 
     /* show add list popup */
-    const handleShow = () => setShow(true);
+    const handleShow = () => setShow(!show);
 
     /* show/hide list submenu  */
     const hendleCollapse = () => {
         setIsCollapse(!isCollapse);
-    }
-
-    /* Add Group */
-    const handleAdd = async () => {
-        if (GroupInputValue) {
-            try {
-                const result = await SaveGroup({ listId: 0, listName: GroupInputValue, IsEnableShow: true });
-                if (result.isSuccess) {
-
-                    const allGroups = await GetAllGroupList();
-                    if (allGroups.data && allGroups.data.length > 0) {
-                        setTaskGroups(allGroups.data);
-                    }
-                }
-                alert(result.message);
-                setGroupInputValue('');
-            } catch (error) {
-                console.error('Error creating list:', error);
-                setGroupInputValue('');
-            }
-        }
-
-        setShow(false);
-    }
-
-    /*handle add list*/
-    const handleErrorAddGroup = (value) => {
-        setGroupInputValue(value);
-        if (!value) {
-            setIsShowError(true);
-        } else {
-            setIsShowError(false);
-        }
     }
 
     const hendleCheckGroup = async (groupId) => {
@@ -85,19 +64,49 @@ export default function Sidebar() {
 
     }
 
+    const updateTaskGroups = async () => {
+
+        const allGroups = await GetAllGroupList();
+        if (allGroups.data && allGroups.data.length > 0) {
+            setTaskGroups(allGroups.data);
+        }
+
+        const res = await GetAllGroupsTaskList();
+        if (res.isSuccess) {
+            setAllGroupTaskList(res.data);
+        } else {
+            console.error("Failed or unexpected response:", res.message, res.data);
+        }
+
+    }
+
     return (
         <div className="sidebarWrapper">
             <div className="sidebar">
                 <ul>
                     <li>
-                        <button className="btn btn-secondary global-create-btn">
+                        <button className="btn btn-primary global-create-btn">
                             Create +
                         </button>
                     </li>
 
+                    <li className={`d-flex ${GetPath() === '/dashboard' ? 'active' : ''}`}>
+                        <CircleCheckBig />
+                        <Link className={`btn nav-link`} to="/dashboard">
+                            All tasks
+                        </Link>
+                    </li>
+
+                    <li className={`d-flex ${GetPath() === '/dashboard/starred' ? 'active' : ''}`}>
+                        <Star />
+                        <Link className={`btn nav-link`} to="/dashboard/starred">
+                            Starred
+                        </Link>
+                    </li>
+
                     <li>
                         <button onClick={hendleCollapse} className="btn">
-                            Task List {isCollapse == false ? <ChevronUp /> : <ChevronDown />}
+                            List {isCollapse == false ? <ChevronUp /> : <ChevronDown />}
                         </button>
                         <ul className={`submenu ${isCollapse == true ? 'collapse' : ''}`}>
                             {taskGroups.length > 0 &&
@@ -108,31 +117,15 @@ export default function Sidebar() {
                         </ul>
                     </li>
                     <li>
-                        <button className="btn createlist-btn" onClick={handleShow}>
+                        <button className="btn createlist-btn" onClick={() => setShow(true)}>
                             <Plus /> <span>Create new list</span>
                         </button>
                     </li>
                 </ul>
 
-                {/* model for add list */}
-                <Modal show={show} onHide={() => setShow(false)}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Add task Group</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        Name: <input type="text" className="form-control" onChange={(e) => handleErrorAddGroup(e.target.value)} />
-                        <br />
-                        <span className={`${isShowError == false ? "d-none" : ""} text-danger`}>please enter value</span>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={() => setShow(false)}>
-                            Close
-                        </Button>
-                        <Button variant="primary" onClick={handleAdd} disabled={!GroupInputValue.trim()}>
-                            Add
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
+
+                <AddOrUpdateGroups show={show} setShow={handleShow} handleAddorEdit={handleAddorEdit} editGroupId={0} />
+
             </div>
         </div>
     );

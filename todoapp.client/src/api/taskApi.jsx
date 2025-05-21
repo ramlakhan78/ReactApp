@@ -59,3 +59,29 @@ export const ToggleStarTask = async (taskId) => {
     }
     return response.json();
 };
+
+export const DeleteTask = async (taskId) => {
+    const response = await fetch(`${BASE_URL}/delete/${taskId}`, {
+        method: 'DELETE'
+    });
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+};
+
+export const GetStarredTask = async () => {
+    const response = await fetch(`${BASE_URL}/get-starred-task`);
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+};
+
+export const DeleteCompletedTask = async (groupId) => {
+    const response = await fetch(`${BASE_URL}/delete-completed-task/${groupId}`, { method:'DELETE'});
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+};

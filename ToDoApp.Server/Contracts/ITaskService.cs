@@ -54,5 +54,18 @@ namespace ToDoApp.Server.Contracts
         /// </summary>
         /// <returns></returns>
         Task<ResponseModel> ToggleStarTaskAsync(int taskId);
+
+        /// <summary>
+        /// Get all starred task async
+        /// </summary>
+        /// <returns></returns>
+        Task<ResponseModel> GetStarredTaskAsync();
+
+        /// <summary>
+        /// delete all completed task of a spacific group
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
+        Task<ResponseModel> DeleteCompletedTaskAsync(int groupId);
     }
 }
