@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { GetGroupById } from '@/api/TaskGroupApi';
 
-const AddOrUpdateGroups = ({ show, setShow, handleAddorEdit, editGroupId, setEditGroupId }) => {
+const AddOrUpdateGroups = ({ show, setShow, handleAddorEdit, editGroupId, setEditGroupId, taskIdToMove,onMove }) => {
     const [isShowError, setIsShowError] = useState(false);
     const [groupName, setGroupName] = useState('');
     const [groupData, setGroupData] = useState({});
@@ -30,10 +30,15 @@ const AddOrUpdateGroups = ({ show, setShow, handleAddorEdit, editGroupId, setEdi
         if (editGroupId > 0) {
             item = { ...groupData, listName: groupName };
         } else {
-            item = { listId: 0, listName: groupName, isEnableShow: true };
+            item = { listId: 0, listName: groupName, isEnableShow: true,sortBy:'My order' };
         }
         setGroupName('');
         setShow(false);
+
+        if (taskIdToMove > 0) {
+            onMove(taskIdToMove, { listId: 0, listName: groupName, isEnableShow: true, sortBy: 'My order' })
+            return;
+        }
         handleAddorEdit(item);
     }
 

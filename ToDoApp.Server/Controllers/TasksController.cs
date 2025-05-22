@@ -133,5 +133,18 @@ public class TasksController(ITaskService taskService) : ControllerBase
     }
     #endregion [Delete Completed Task]
 
+    #region [Move Task To New List]
+    [HttpPost("movetask-to-newlist")]
+    public async Task<IActionResult> MoveTaskToNewList(int taskId, [FromBody] TaskGroup group)
+    {
+        var response = await taskService.MoveTaskToNewList(taskId, group);
+        if (!response.IsSuccess)
+        {
+            return BadRequest(response);
+        }
+        return Ok(response);
+    }
+    #endregion [Move Task To New List]
+
 }
 

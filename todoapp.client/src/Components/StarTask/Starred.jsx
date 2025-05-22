@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import AddOrUpdateTask from '../Dashboard/AddOrUpdateTask';
+import AddOrUpdateGroups from '../Sidebar/AddOrUpdateGroups';
 import { EllipsisVertical, CircleCheckBig, Star, Check, Trash2 } from "lucide-react";
 import { SaveTask } from '@/api/TaskApi';
 import { FormateDate } from "../../global/Helper";
@@ -8,23 +9,26 @@ import { useTaskEvents } from '../../Hooks/TaskEvents';
 const Starred = () => {
     const {
         showAddorEditTaskModel, setShowAddorEditTaskModel,
+        showAddorEditGroupModel, setShowAddorEditGroupModel,
         taskIdForEdit, setTaskIdForEdit,
         gorupIdForAddTask, setGorupIdForAddTask,
+        taskIdToMoveNewGroup,
         hendleEditTask,
         handleAddTask,
         handleDeleteTask,
         hendleUpdateStar,
         handleCompleteTask,
+        handleMoveTaskToNewList,
         handleSort,
+        handleShowModelToMoveTaskToNewList,
         updateTaskLists,
         allStarredTasks,
-        taskGroups
+        taskGroups,
+        handleMoveTask
     } = useTaskEvents();
 
     const [openGroupMenu, setOpenGroupMenu] = useState(null);
     const [openTaskIdMenu, setOpenTaskIdMenu] = useState(null);
-
-    
 
     const hendleAddOrEdit = async (item) => {
         let itemToAddOrEdit = {};
@@ -43,12 +47,6 @@ const Starred = () => {
         await updateTaskLists()
         setTaskIdForEdit(0);
         setGorupIdForAddTask(0);
-    }
-
-    const handleMoveTask = (taskId, groupId) => {
-        console.log(allStarredTasks);
-        console.log(taskGroups);
-        console.log(taskId, groupId);
     }
 
     return (
@@ -115,19 +113,38 @@ const Starred = () => {
                                                                     <EllipsisVertical />
                                                                     {openTaskIdMenu == task.taskId && (
                                                                         <div className="tasksubmenu">
-                                                                            <div className="submenu-section">
-                                                                                <div className="submenu-item" onClick={() => handleDeleteTask(task.taskId)}><Trash2 /> Delete</div>
-                                                                            </div>
-                                                                            <div className="submenu-section">
-                                                                                <div className="tasksubmenu-item text-bold">My Task</div>
+                                                                            <div className="tasksubmenu-section">
+                                                                                <div className="tasksubmenu-item" onClick={() => handleDeleteTask(task.taskId)}>
+                                                                                    <div className="row">
+                                                                                        <div className="col-2"><Trash2 /></div>
+                                                                                        <div className="col-10">Delete</div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div className="tasksubmenu-devider"></div>
+                                                                                <div className="tasksubmenu-title text-bold">My Task</div>
 
                                                                                 {taskGroups &&
                                                                                     taskGroups.map(groupItem => (
                                                                                         allStarredTasks.groupId === groupItem.listId ?
-                                                                                            <div key={groupItem.listId} className="tasksubmenu-item" onClick={() => handleMoveTask(task.taskId, task.listId)}><Check /> {groupItem.listName}</div> :
-                                                                                            <div key={groupItem.listId} className="tasksubmenu-item" onClick={() => handleMoveTask(task.taskId, task.listId)}> {groupItem.listName}</div>
+                                                                                            <div key={groupItem.listId} className="tasksubmenu-item" onClick={() => handleMoveTask(task.taskId, groupItem.listId)}>
+                                                                                                <div className="row">
+                                                                                                    <div className="col-2"><Check /></div>
+                                                                                                    <div className="col-10">{groupItem.listName}</div>
+                                                                                                </div>
+                                                                                            </div> :
+                                                                                            <div key={groupItem.listId} className="tasksubmenu-item" onClick={() => handleMoveTask(task.taskId, groupItem.listId)}>
+
+                                                                                                <div className="row">
+                                                                                                    <div className="col-2"></div>
+                                                                                                    <div className="col-10">{groupItem.listName}</div>
+                                                                                                </div>
+                                                                                            </div>
                                                                                     ))
                                                                                 }
+                                                                                <div className="tasksubmenu-item" onClick={() => handleShowModelToMoveTaskToNewList(task.taskId)}><div className="row">
+                                                                                    <div className="col-2"></div>
+                                                                                    <div className="col-10">+ new list</div>
+                                                                                </div></div>
                                                                             </div>
                                                                         </div>
                                                                     )}
@@ -167,6 +184,16 @@ const Starred = () => {
                     taskGroupId={gorupIdForAddTask}
                 />
             }
+
+            {showAddorEditGroupModel
+                && <AddOrUpdateGroups
+                show={showAddorEditGroupModel}
+                setShow={setShowAddorEditGroupModel}
+                handleAddorEdit={handleMoveTaskToNewList}
+                editGroupId={0}
+                taskIdToMove={taskIdToMoveNewGroup}
+                onMove={handleMoveTaskToNewList}
+                />}
         </div>
     )
 }

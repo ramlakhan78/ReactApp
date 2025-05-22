@@ -67,5 +67,13 @@ namespace ToDoApp.Server.Contracts
         /// <param name="groupId"></param>
         /// <returns></returns>
         Task<ResponseModel> DeleteCompletedTaskAsync(int groupId);
+
+        /// <summary>
+        /// move task to a new group
+        /// </summary>
+        /// <param name="taskId"></param>
+        /// <param name="group"></param>
+        /// <returns></returns>
+        Task<ResponseModel> MoveTaskToNewList(int taskId, TaskGroup group);
     }
 }

@@ -3,14 +3,17 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import { GetTaskById } from '@/api/taskApi';
-
+import { useTaskEvents } from '../../Hooks/TaskEvents';
 
 const AddOrUpdateTask = ({ show, setShow, onAddOrEdit, editTaskId, setEditTaskId, taskGroupId }) => {
+
+    const {taskGroups} = useTaskEvents();
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [date, setDate] = useState(null);
     const [isShowError, setIsShowError] = useState(false);
     const [editTaskItem, setEditTaskItem] = useState([]);
+    const [groupId, setGroupId] = useState(1);
 
 
     useEffect(() => {
@@ -25,7 +28,6 @@ const AddOrUpdateTask = ({ show, setShow, onAddOrEdit, editTaskId, setEditTaskId
                     setEditTaskItem(itemToEdit);
                 }
             }
-
         })();
     }, []);
 
@@ -40,10 +42,12 @@ const AddOrUpdateTask = ({ show, setShow, onAddOrEdit, editTaskId, setEditTaskId
         if (editTaskId > 0) {
             itemToAddOrEdit = { ...editTaskItem, title: title, description: description, toDoDate: toDoDate };
         } else {
-            itemToAddOrEdit = { taskId: 0, title: title, description: description, toDoDate: date, taskGroupId: taskGroupId };
+            const groupid = taskGroupId > 0 ? taskGroupId : groupId;
+            itemToAddOrEdit = { taskId: 0, title: title, description: description, toDoDate: date, taskGroupId: groupid };
         }
 
         onAddOrEdit(itemToAddOrEdit);
+        setGroupId(1);
         EmptyAllFields();
         setShow(false);
     }
@@ -107,20 +111,21 @@ const AddOrUpdateTask = ({ show, setShow, onAddOrEdit, editTaskId, setEditTaskId
                             type="Date"
                         />
                     </Form.Group>
-                    {/*{
-                        taskId > 0 ?
+
+                    {
+                        taskGroupId === 0 && editTaskId == 0 ?
 
                             <Form.Group className="mb-3" controlId="exampleForm.ControlInput3">
                                 <Form.Label>Select Task Group</Form.Label>
                                 <Form.Select
-                                    onChange={(e) => setgroupId(e.target.value)} aria-label="Default select example">
+                                    onChange={(e) => setGroupId(e.target.value)} aria-label="Default select example">
                                     {taskGroups.map((item) => (
                                         <option key={item.listId} value={item.listId}>{item.listName}</option>
                                     ))}
                                 </Form.Select>
                             </Form.Group>
                             : ''
-                    }*/}
+                    }
 
                 </Form>
             </Modal.Body>

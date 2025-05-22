@@ -8,93 +8,105 @@ body {
     background-color: #ebe9e9;
 }
 
-.menu-toggle {
-    height: 70px;
+.header {
+    height: 80px;
     position: fixed;
     top: 0px;
     left: 0px;
     z-index: 1000;
     background-color: #fff;
-    padding: 10px 20px;
+    padding: 20px 20px;
+    width: 100%;
 }
 
-    .menu-toggle button {
+    .header .row svg {
+        height: 45px;
+        width: 100px;
+        cursor: pointer;
+    }
+
+    .header button {
         min-width: 40px;
         cursor: pointer;
     }
 
-    .menu-toggle span {
+    .header span {
         margin-left: 10px;
         font-size: 25px;
     }
 
-.main .sidebarWrapper {
+.main .sidebar {
     padding-top: 20px;
     width: 20%;
-    flex: 0 0 20%;
+    height: 100vh;
+    position: fixed;
+    top: 80px;
+    left: 0px;
+    background-color: #fff;
+    /*flex: 0 0 20%;*/
     transition: all 0.3s ease-in-out;
 }
 
-    .main .sidebarWrapper .sidebar {
-        padding-top: 30px;
+    .main .sidebar.hide {
+        padding-top: 20px;
         width: 20%;
         height: 100vh;
         position: fixed;
-        top: 70px;
-        left: 0px;
+        top: 80px;
+        left: -100%;
         background-color: #fff;
+        transition: left 0.3s ease-in-out;
     }
 
+    .main .sidebar ul li {
+        list-style: none;
+        display: block;
+        cursor: pointer;
+        width: 100%;
+        text-align: left;
+        padding: 7px 9px 7px 9px;
+        border-radius: 10px;
+    }
 
-        .main .sidebarWrapper .sidebar ul li {
-            list-style: none;
-            display: block;
-            cursor: pointer;
-            width: 100%;
-            text-align: left;
-            padding: 7px 9px 7px 9px;
-            border-radius: 10px;
-        }
-
-            .main .sidebarWrapper .sidebar ul li .nav-link {
-                font-size: 20px;
-                font-weight: 600;
-                border: none;
-                padding-left: 10px;
-            }
-
-        .main .sidebarWrapper .sidebar ul .active {
-            background-color: #0d6efd;
-            color: white;
-        }
-
-        .main .sidebarWrapper .sidebar ul li .createlist-btn span {
-            margin-left: 10px;
-        }
-
-        .main .sidebarWrapper .sidebar ul li .global-create-btn {
-            margin-bottom: 20px;
-        }
-
-        .main .sidebarWrapper .sidebar ul li button {
+        .main .sidebar ul li .nav-link {
             font-size: 20px;
             font-weight: 600;
             border: none;
+            padding-left: 10px;
         }
 
-        .main .sidebarWrapper .sidebar ul li .submenu {
+    .main .sidebar ul .active {
+        background-color: #0d6efd;
+        color: white;
+    }
+
+    .main .sidebar ul li .createlist-btn span {
+        margin-left: 10px;
+    }
+
+    .main .sidebar ul li .global-create-btn {
+        margin-bottom: 20px;
+    }
+
+    .main .sidebar ul li button {
+        font-size: 20px;
+        font-weight: 600;
+        border: none;
+    }
+
+    .main .sidebar ul li .submenu {
+        width: 100%;
+    }
+
+
+        .main .sidebar ul li .submenu .submenu-item {
             width: 100%;
+            list-style: none;
         }
 
-
-            .main .sidebarWrapper .sidebar ul li .submenu .submenu-item {
-                width: 100%;
-                list-style: none;
+            .main .sidebar ul li .submenu .submenu-item span {
+                font-size: 20px
             }
-
-                .main .sidebarWrapper .sidebar ul li .submenu .submenu-item span {
-                    font-size: 20px
-                }
 
 .main {
     display: flex;
@@ -103,203 +115,257 @@ body {
 
     .main .content {
         width: 80%;
-        margin-top: 70px;
         padding: 20px 0px 0px 20px;
         box-sizing: border-box;
         overflow-y: auto;
         overflow-x: hidden;
-        min-height: 100vh;
+        position: absolute;
+        top: 70px;
+        left: 20%;
+        transition: left 0.3s ease-in-out;
     }
+
+        .main .content.sidebar-hidden {
+            width: 100%;
+            padding: 20px 0px 0px 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            overflow-x: hidden;
+            position: absolute;
+            top: 70px;
+            left: 0;
+            transition: left 0.3s ease-in-out;
+        }
 
         .main .content .task-scroll-container {
             overflow-x: auto;
-            padding-bottom: 200px; /* space for scrollbar */
+            padding-bottom: 300px; /* space for scrollbar */
         }
 
-            .main .content .task-scroll-container .task-scroll {
-                display: flex;
-                gap: 16px;
-                padding: 10px 0;
-                min-height: 320px; /* Adjust based on card height */
-                max-width: 500px;
+            .main .content .task-scroll-container ::after {
             }
 
-                .main .content .task-scroll-container .task-scroll .task-card {
-                    flex: 0 0 auto;
-                    min-width: 500px;
-                    background: white;
-                    border-radius: 10px;
-                    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-                    padding: 16px;
-                    height: 100%; /* match height of container */
-                    box-sizing: border-box;
-                    position: relative;
-                    font-family: Arial, sans-serif;
-                    width: 100%;
-                }
+::-webkit-scrollbar {
+    position:fixed;
+    width: 7px;
+}
 
-                    .main .content .task-scroll-container .task-scroll .task-card .add-task-button {
-                        border: none;
-                        width: 100%;
-                        text-align: left;
-                        color: #0d6efd;
-                    }
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey;
+    border-radius: 10px;
+}
 
-                        .main .content .task-scroll-container .task-scroll .task-card .add-task-button .add-task-check {
-                            width: 40px;
-                        }
+::-webkit-scrollbar-thumb {
+    background: gray;
+    border-radius: 10px;
+}
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: gray;
+    }
+
+.main .content .task-scroll-container .task-scroll {
+    display: flex;
+    gap: 16px;
+    padding: 10px 0;
+    min-height: 320px; /* Adjust based on card height */
+    max-width: 500px;
+}
+
+    .main .content .task-scroll-container .task-scroll .task-card {
+        flex: 0 0 auto;
+        min-width: 271px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        padding: 16px;
+        height: 100%; /* match height of container */
+        box-sizing: border-box;
+        position: relative;
+        font-family: Arial, sans-serif;
+        width: 100%;
+    }
+
+        .main .content .task-scroll-container .task-scroll .task-card .add-task-button {
+            border: none;
+            width: 100%;
+            text-align: left;
+            color: #0d6efd;
+        }
+
+            .main .content .task-scroll-container .task-scroll .task-card .add-task-button .add-task-check {
+                width: 40px;
+            }
 
 
-                    .main .content .task-scroll-container .task-scroll .task-card .task-card-header {
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                    }
+        .main .content .task-scroll-container .task-scroll .task-card .task-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-                        .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-group-menu {
-                            cursor: pointer;
-                            font-size: 24px;
-                            padding: 4px 8px;
-                            border-radius: 50%;
-                            user-select: none;
-                            position: relative;
-                        }
+            .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-group-menu {
+                cursor: pointer;
+                font-size: 24px;
+                padding: 4px 8px;
+                border-radius: 50%;
+                user-select: none;
+                position: relative;
+            }
 
 
 
-                            /*.main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-group-menu:hover {
+                /*.main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-group-menu:hover {
                                 background-color: #ebe9e9;
                             }*/
 
-                            .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-group-menu .submenu {
-                                position: absolute;
-                                top: 36px;
-                                right: 8px;
-                                background: #fff;
-                                border-radius: 8px;
-                                box-shadow: 0 2px 6px rgb(0 0 0 / 0.5);
-                                min-width: 220px;
-                                z-index: 1000;
-                                padding: 8px 0;
-                                font-size: 14px;
-                                color: #3c4043;
-                            }
+                .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-group-menu .submenu {
+                    position: absolute;
+                    top: 36px;
+                    right: 8px;
+                    background: #fff;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 6px rgb(0 0 0 / 0.5);
+                    min-width: 220px;
+                    z-index: 1000;
+                    padding: 8px 0;
+                    font-size: 14px;
+                    color: #3c4043;
+                }
 
-                                .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-group-menu .submenu .submenu-section {
-                                    padding: 0 16px 8px 16px;
-                                }
-
-                                    .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-group-menu .submenu .submenu-section .submenu-title {
-                                        font-weight: 600;
-                                        font-size: 13px;
-                                        margin-bottom: 6px;
-                                        color: black;
-                                    }
-
-                                    .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-group-menu .submenu .submenu-section.submenu-item {
-                                        padding: 8px 16px;
-                                        cursor: pointer;
-                                        border-radius: 4px;
-                                    }
-
-                                .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-group-menu .submenu .submenu-item {
-                                    padding: 4px 16px;
-                                    cursor: pointer;
-                                    border-radius: 4px;
-
-                                }
-                                
-                                
-
-                                .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-group-menu .submenu.submenu-divider {
-                                    height: 1px;
-                                    background-color: gray;
-                                    margin: 6px 0;
-                                }
-
-                    .main .content .task-scroll-container .task-scroll .task-card .task-card-body .row {
-                        width: 100%;
+                    .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-group-menu .submenu .submenu-section {
+                        padding: 0 16px 8px 16px;
                     }
 
-                        .main .content .task-scroll-container .task-scroll .task-card .task-card-body .row .col-2 .task-menu {
-                            cursor: pointer;
-                            font-size: 24px;
-                            padding: 4px 8px;
-                            border-radius: 50%;
-                            user-select: none;
-                            position: relative;
-                            justify-content: center;
-                            text-align: center;
+                        .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-group-menu .submenu .submenu-section .submenu-title {
+                            font-weight: 600;
+                            font-size: 13px;
+                            margin-bottom: 6px;
+                            color: black;
                         }
 
+                        .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-group-menu .submenu .submenu-section.submenu-item {
+                            padding: 8px 16px;
+                            cursor: pointer;
+                            border-radius: 4px;
+                        }
+
+                    .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-group-menu .submenu .submenu-item {
+                        padding: 4px 16px;
+                        cursor: pointer;
+                        border-radius: 4px;
+                    }
 
 
-                        /*.main .content .task-scroll-container .task-scroll .task-card .task-card-body .row .task-menuwrapper .task-menu:hover {
+
+                    .main .content .task-scroll-container .task-scroll .task-card .task-card-header .task-group-menu .submenu .submenu-divider {
+                        height: 1px;
+                        background-color: black;
+                        margin: 6px 0;
+                    }
+
+        .main .content .task-scroll-container .task-scroll .task-card .task-card-body .row {
+            width: 100%;
+        }
+
+            .main .content .task-scroll-container .task-scroll .task-card .task-card-body .row .col-2 .task-menu {
+                cursor: pointer;
+                font-size: 24px;
+                padding: 4px 8px;
+                border-radius: 50%;
+                user-select: none;
+                position: relative;
+                justify-content: center;
+                text-align: center;
+            }
+
+
+
+            /*.main .content .task-scroll-container .task-scroll .task-card .task-card-body .row .task-menuwrapper .task-menu:hover {
                         background-color: #ebe9e9;
                     }*/
 
-                        .main .content .task-scroll-container .task-scroll .task-card .task-card-body .row .task-menuwrapper .task-menu .tasksubmenu {
-                            position: absolute;
-                            top: 36px;
-                            right: 8px;
-                            background: #fff;
-                            border-radius: 8px;
-                            box-shadow: 0 2px 6px rgb(0 0 0 / 0.5);
-                            min-width: 220px;
-                            z-index: 1000;
-                            padding: 8px 0;
-                            font-size: 14px;
-                            color: #3c4043;
-                        }
+            .main .content .task-scroll-container .task-scroll .task-card .task-card-body .row .task-menuwrapper .task-menu .tasksubmenu {
+                position: absolute;
+                top: 36px;
+                right: 8px;
+                background: #fff;
+                border-radius: 8px;
+                box-shadow: 0 2px 6px rgb(0 0 0 / 0.5);
+                min-width: 220px;
+                z-index: 1000;
+                padding: 8px 0;
+                font-size: 14px;
+                color: #3c4043;
+            }
 
-                            .main .content .task-scroll-container .task-scroll .task-card .task-card-body .row .task-menuwrapper .task-menu .tasksubmenu .tasksubmenu-section {
-                                background-color: #ebe9e9;
-                            }
+                .main .content .task-scroll-container .task-scroll .task-card .task-card-body .row .task-menuwrapper .task-menu .tasksubmenu .tasksubmenu-section {
+                    background-color: #fff;
+                }
 
-                            .main .content .task-scroll-container .task-scroll .task-card .task-card-body .row .task-menuwrapper .task-menu .tasksubmenu .tasksubmenu-item {
-                                padding: 8px 16px;
-                                cursor: pointer;
-                                border-radius: 4px;
-                            }
+                    .main .content .task-scroll-container .task-scroll .task-card .task-card-body .row .task-menuwrapper .task-menu .tasksubmenu .tasksubmenu-section .tasksubmenu-title {
+                        font-weight: 600;
+                        font-size: 13px;
+                        margin-bottom: 6px;
+                        color: black;
+                    }
 
+                .main .content .task-scroll-container .task-scroll .task-card .task-card-body .row .task-menuwrapper .task-menu .tasksubmenu .tasksubmenu-devider {
+                    height: 1px;
+                    background-color: black;
+                    margin: 6px 0;
+                }
 
+                .main .content .task-scroll-container .task-scroll .task-card .task-card-body .row .task-menuwrapper .task-menu .tasksubmenu .tasksubmenu-item {
+                    padding: 6px 11px 8px 18px;
+                    cursor: pointer;
+                    border-radius: 4px;
+                    text-align: left;
+                }
 
-                        .main .content .task-scroll-container .task-scroll .task-card .task-card-body .row input[type=radio] {
-                            cursor: pointer;
-                        }
-
-                    .main .content .task-scroll-container .task-scroll .task-card .task-card-body .task-details {
-                        cursor: pointer;
+                    .main .content .task-scroll-container .task-scroll .task-card .task-card-body .row .task-menuwrapper .task-menu .tasksubmenu .tasksubmenu-item span {
+                        padding: 6px 11px 8px 18px;
                     }
 
 
-                    .main .content .task-scroll-container .task-scroll .task-card .task-card-body .task-title {
-                        font-weight: 500;
-                    }
 
-                    .main .content .task-scroll-container .task-scroll .task-card .task-card-body .task-description {
-                        font-size: small;
-                    }
+            .main .content .task-scroll-container .task-scroll .task-card .task-card-body .row input[type=radio] {
+                cursor: pointer;
+            }
 
-                    .main .content .task-scroll-container .task-scroll .task-card .task-card-body .incomplete-task .task-date {
-                        font-size: small;
-                        padding-left: 10px;
-                        border-radius: 10px;
-                        border: 1px solid gray;
-                        /*box-shadow: 0 2px 6px rgb(0 0 0 / 0.5);*/
-                        width: 100px;
-                    }
-                    .main .content .task-scroll-container .task-scroll .task-card .task-card-body .completed-task .task-date {
-                        font-size: small;
-                    }
+        .main .content .task-scroll-container .task-scroll .task-card .task-card-body .task-details {
+            cursor: pointer;
+        }
 
-                    .main .content .task-scroll-container .task-scroll .task-card .task-card-body .star-div svg {
-                        cursor: pointer;
-                    }
 
-                    .main .content .task-scroll-container .task-scroll .task-card .task-card-body .completed-task .row svg {
-                        cursor: pointer;
-                    }
+        .main .content .task-scroll-container .task-scroll .task-card .task-card-body .task-title {
+            font-weight: 500;
+        }
+
+        .main .content .task-scroll-container .task-scroll .task-card .task-card-body .task-description {
+            font-size: small;
+        }
+
+        .main .content .task-scroll-container .task-scroll .task-card .task-card-body .incomplete-task .task-date {
+            font-size: small;
+            padding-left: 10px;
+            border-radius: 10px;
+            border: 1px solid gray;
+            /*box-shadow: 0 2px 6px rgb(0 0 0 / 0.5);*/
+            width: 100px;
+        }
+
+        .main .content .task-scroll-container .task-scroll .task-card .task-card-body .completed-task .task-date {
+            font-size: small;
+        }
+
+        .main .content .task-scroll-container .task-scroll .task-card .task-card-body .star-div svg {
+            cursor: pointer;
+        }
+
+        .main .content .task-scroll-container .task-scroll .task-card .task-card-body .completed-task .row svg {
+            cursor: pointer;
+        }
 
 
 .task-menu,

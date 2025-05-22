@@ -1,12 +1,17 @@
+import { SquareMenu } from 'lucide-react';
+import { useTaskEvents } from '../../Hooks/TaskEvents';
 
 const Header = () => {
+    const { hideSidebar, setHideSidebar } = useTaskEvents();
+    console.log(hideSidebar);
     return (
-        <div className="menu-toggle w-100">
-            <div className="row">
-                <div className="col-2">
-                    <span>React App</span>
+        <div className="header">
+            <div className="row d-flex justify-content-center text-left" onClick={() => setHideSidebar(!hideSidebar)}>
+                <div className="col-1">
+                    <SquareMenu className="squaremenu-btn"  />
                 </div>
-                <div className="col-10">
+                <div className="col-11 text-end">
+                    <p> RAMLAKHAN'S TO DO APP </p>
                 </div>
             </div>
         </div>

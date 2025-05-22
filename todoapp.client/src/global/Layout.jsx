@@ -5,7 +5,7 @@ import Sidebar from '../Components/Sidebar/Sidebar';
 const Layout = ({ children }) => (
     <>
         <Header />
-        <div className="d-flex main">
+        <div className="main">
             <Sidebar />
             {children}
         </div>

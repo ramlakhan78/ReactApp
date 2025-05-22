@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import AddOrUpdateTask from './AddOrUpdateTask';
 import { EllipsisVertical, CircleCheckBig, Star, Check, Trash2, ArrowBigRightDash, ArrowBigDown } from "lucide-react";
-import {  DeleteCompletedTask } from '@/api/TaskApi';
+import { DeleteCompletedTask } from '@/api/TaskApi';
 import { FormateDate } from "../../global/Helper";
 import AddOrUpdateGroups from '../Sidebar/AddOrUpdateGroups';
 import { useTaskEvents } from '@/Hooks/TaskEvents';
@@ -10,7 +10,10 @@ const Dashboard = () => {
     const {
         showAddorEditTaskModel, setShowAddorEditTaskModel,
         taskIdForEdit, setTaskIdForEdit,
-        gorupIdForAddTask, 
+        showAddorEditGroupModel, setShowAddorEditGroupModel,
+        taskIdToMoveNewGroup,
+        hideSidebar,
+        gorupIdForAddTask,
         hendleEditTask,
         handleAddTask,
         hendleAddOrEdit,
@@ -19,9 +22,13 @@ const Dashboard = () => {
         handleCompleteTask,
         handleRenameGroup,
         handleDeleteGroup,
+        handleMoveTaskToNewList,
+        handleShowModelToMoveTaskToNewList,
         allGroupTaskList,
         setAllGroupTaskList,
-        handleSort
+        handleSort,
+        handleMoveTask,
+        taskGroups
     } = useTaskEvents();
 
     const [renameGroupid, setRenameGroupid] = useState(0);
@@ -36,12 +43,12 @@ const Dashboard = () => {
         setRenameGroupid(groupId);
     }
 
-    const handleDeleteCompletedTask = async(groupId) => {
-        const res =await DeleteCompletedTask(groupId);
+    const handleDeleteCompletedTask = async (groupId) => {
+        const res = await DeleteCompletedTask(groupId);
         if (res.isSuccess) {
-            const updatedGroupTaskList = allGroupTaskList.map(group => 
+            const updatedGroupTaskList = allGroupTaskList.map(group =>
                 group.groupId === groupId ? { ...group, completedTaskList: [] } :
-                { ...group}
+                    { ...group }
             );
             setAllGroupTaskList(updatedGroupTaskList);
         } else {
@@ -50,7 +57,8 @@ const Dashboard = () => {
     }
 
     return (
-        <div className="content">
+        
+        <div className={`content ${hideSidebar ? "sidebar-hidden" : ""}`}>
             <div className="task-scroll-container">
                 {
                     <div className="task-scroll">
@@ -71,11 +79,12 @@ const Dashboard = () => {
                                                 <div className="submenu">
                                                     <div className="submenu-section">
                                                         <div className="submenu-title">Sort by</div>
-                                                            <div className="submenu-item sort-item" onClick={() => handleSort("My order", group.groupId)} style={{ fontWeight: group.sortBy === "My order" ? "bold" : "normal" }}>My order</div>
-                                                            <div className="submenu-item sort-item" onClick={() => handleSort("Date", group.groupId)} style={{ fontWeight: group.sortBy === "Date" ? "bold" : "normal" }}>Date</div>
-                                                            <div className="submenu-item sort-item" onClick={() => handleSort("Title", group.groupId)} style={{ fontWeight: group.sortBy === "Title" ? "bold" : "normal" }}>Title</div>
-                                                            <div className="submenu-item sort-item" onClick={() => handleSort("Description", group.groupId)} style={{ fontWeight: group.sortBy === "Description" ? "bold" : "normal" }}>Description</div>
-                                                    </div>
+                                                        <div className="submenu-item sort-item" onClick={() => handleSort("My order", group.groupId)} style={{ fontWeight: group.sortBy === "My order" ? "bold" : "normal" }}>My order</div>
+                                                        <div className="submenu-item sort-item" onClick={() => handleSort("Date", group.groupId)} style={{ fontWeight: group.sortBy === "Date" ? "bold" : "normal" }}>Date</div>
+                                                        <div className="submenu-item sort-item" onClick={() => handleSort("Title", group.groupId)} style={{ fontWeight: group.sortBy === "Title" ? "bold" : "normal" }}>Title</div>
+                                                        <div className="submenu-item sort-item" onClick={() => handleSort("Description", group.groupId)} style={{ fontWeight: group.sortBy === "Description" ? "bold" : "normal" }}>Description</div>
+                                                        </div>
+                                                        <div className="submenu-divider"></div>
                                                     <div className="submenu-item" onClick={() => showModelForRenameGroup(group.groupId)}>Rename list</div>
                                                     {
                                                         group.groupId !== 1 ?
@@ -83,7 +92,7 @@ const Dashboard = () => {
                                                             <div className="submenu-item text-secondary">Delete list</div>
                                                     }
 
-                                                        <div className="submenu-item disabled" onClick={() => handleDeleteCompletedTask(group.groupId)}>Delete all completed tasks</div>
+                                                    <div className="submenu-item disabled" onClick={() => handleDeleteCompletedTask(group.groupId)}>Delete all completed tasks</div>
                                                 </div>
                                             )}
                                         </div>
@@ -125,8 +134,44 @@ const Dashboard = () => {
                                                                         <EllipsisVertical />
                                                                         {openTaskMenuId === task.taskId && (
                                                                             <div className="tasksubmenu">
-                                                                                <div className="submenu-section">
-                                                                                    <div className="tasksubmenu-item"><button className="btn" onClick={() => handleDeleteTask(task.taskId)}>Delete</button></div>
+                                                                                <div className="tasksubmenu-section">
+                                                                                    <div className="tasksubmenu-item" onClick={() => handleDeleteTask(task.taskId)}>
+                                                                                        <div className="row">
+                                                                                            <div className="col-2"><Trash2 /></div>
+                                                                                            <div className="col-10">Delete</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div className="tasksubmenu-devider"></div>
+                                                                                    <div className="tasksubmenu-title text-bold">My Task</div>
+
+                                                                                    {taskGroups &&
+                                                                                        taskGroups.map(groupItem => (
+                                                                                            group.groupId === groupItem.listId
+                                                                                                ?
+                                                                                                <div key={groupItem.listId} className="tasksubmenu-item" onClick={() => handleMoveTask(task.taskId, groupItem.listId)}>
+                                                                                                    <div className="row">
+                                                                                                        <div className="col-2"><Check /></div>
+                                                                                                        <div className="col-10">{groupItem.listName}</div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                :
+                                                                                                <div key={groupItem.listId} className="tasksubmenu-item" onClick={() => handleMoveTask(task.taskId, groupItem.listId)}>
+
+                                                                                                    <div className="row">
+                                                                                                        <div className="col-2"></div>
+                                                                                                        <div className="col-10">{groupItem.listName}</div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                        ))
+                                                                                    }
+
+                                                                                    <div className="tasksubmenu-item" onClick={() => handleShowModelToMoveTaskToNewList(task.taskId)}>
+                                                                                        
+                                                                                        <div className="row">
+                                                                                            <div className="col-2"></div>
+                                                                                            <div className="col-10">+ new list</div>
+                                                                                        </div>
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
                                                                         )}
@@ -231,6 +276,17 @@ const Dashboard = () => {
                     handleAddorEdit={handleRenameGroup}
                     editGroupId={renameGroupid}
                     setEditGroupId={setRenameGroupid}
+                />
+            }
+
+            {showAddorEditGroupModel
+                && <AddOrUpdateGroups
+                show={showAddorEditGroupModel}
+                setShow={setShowAddorEditGroupModel}
+                handleAddorEdit={handleMoveTaskToNewList}
+                editGroupId={0}
+                taskIdToMove={taskIdToMoveNewGroup}
+                onMove={handleMoveTaskToNewList}
                 />
             }
         </div>

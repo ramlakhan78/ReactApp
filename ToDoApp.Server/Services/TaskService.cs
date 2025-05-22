@@ -141,10 +141,10 @@ public class TaskService(IBaseRepository<TasksDto> taskRepo, IBaseRepository<Tas
             {
                 GroupId = group.ListId,
                 GroupName = group.ListName,
-                SortBy =group.SortBy,
+                SortBy = group.SortBy,
                 isEnableShow = group.IsEnableShow,
                 TaskList = taskList.Where(x => x.TaskGroupId == group.ListId && !x.IsCompleted)
-                                   .OrderBy(x=> group.SortBy == "Title" ? x.Title :
+                                   .OrderBy(x => group.SortBy == "Title" ? x.Title :
                                    group.SortBy == "Date" ? x.ToDoDate.ToString() :
                                    group.SortBy == "Description" ? x.Description :
                                    x.TaskId.ToString()).ToList(),
@@ -244,4 +244,34 @@ public class TaskService(IBaseRepository<TasksDto> taskRepo, IBaseRepository<Tas
         }
         return response;
     }
+
+    public async Task<ResponseModel> MoveTaskToNewList(int taskId, TaskGroup group)
+    {
+        ResponseModel response = new();
+        try
+        {
+            await taskGroupRepo.AddAsync(group);
+            var task = await taskRepo.GetByIdAsync(taskId).ConfigureAwait(false);
+
+            if (task == null)
+            {
+                response.IsSuccess = false;
+                response.Message = "Task not found";
+                return response;
+            }
+
+            task.TaskGroupId = group.ListId;
+            await taskRepo.UpdateAsync(task);
+            response.IsSuccess = true;
+            response.Message = "Task moved to new group successfully";
+
+        }
+        catch (Exception ex)
+        {
+            response.IsSuccess = false;
+            response.Message = ex.Message;
+        }
+        return response;
+    }
 }
+

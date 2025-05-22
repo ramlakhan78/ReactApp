@@ -52,7 +52,7 @@ export const GetAllGroupsTaskList = async () => {
 
 export const ToggleStarTask = async (taskId) => {
     const response = await fetch(`${BASE_URL}/toggle-star/${taskId}`, {
-        method:'PUT'
+        method: 'PUT'
     });
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -79,7 +79,20 @@ export const GetStarredTask = async () => {
 };
 
 export const DeleteCompletedTask = async (groupId) => {
-    const response = await fetch(`${BASE_URL}/delete-completed-task/${groupId}`, { method:'DELETE'});
+    const response = await fetch(`${BASE_URL}/delete-completed-task/${groupId}`, { method: 'DELETE' });
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+};
+
+export const MoveTaskToNewGroup = async (taskId, groupItem) => {
+    const response = await fetch(`${BASE_URL}/movetask-to-newlist?taskId=${taskId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(groupItem),
+    });
+
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
     }

@@ -6,7 +6,8 @@ import {
     ToggleStarTask,
     GetStarredTask,
     DeleteTask,
-    GetTaskById
+    GetTaskById,
+    MoveTaskToNewGroup
 } from '../api/TaskApi';
 
 import {
@@ -24,23 +25,35 @@ export function useTaskEvents() {
         allStarredTasks,
         setallStarredTasks,
         taskGroups,
-        setTaskGroups
+        setTaskGroups,
+        hideSidebar, setHideSidebar
     } = useContext(Context);
 
     const [showAddorEditTaskModel, setShowAddorEditTaskModel] = useState(false);
+    const [showAddorEditGroupModel, setShowAddorEditGroupModel] = useState(false);
+    const [taskIdToMoveNewGroup, setTaskIdToMoveNewGroup] = useState(0);
     const [taskIdForEdit, setTaskIdForEdit] = useState(0);
     const [gorupIdForAddTask, setGorupIdForAddTask] = useState(0);
+ 
 
+ /*   const setToggleHideSlider = (isHide) => {
+        console.log(isHide);
+        setHideSlidebar(isHide)
+    }*/
+
+    // Set task id for edit and show model
     const hendleEditTask = (taskId) => {
         setTaskIdForEdit(taskId);
         setShowAddorEditTaskModel(true);
     };
 
+    // Set group id for add task and show model
     const handleAddTask = (GroupId) => {
         setGorupIdForAddTask(GroupId);
         setShowAddorEditTaskModel(true);
     };
 
+    // Add or Edit task
     const hendleAddOrEdit = async (item) => {
         const res = await SaveTask(item);
         if (!res.isSuccess) {
@@ -51,6 +64,7 @@ export function useTaskEvents() {
         setGorupIdForAddTask(0);
     };
 
+    // Delete task handler 
     const handleDeleteTask = async (taskId) => {
         const res = await DeleteTask(taskId);
         if (!res.isSuccess) {
@@ -60,6 +74,7 @@ export function useTaskEvents() {
         }
     };
 
+    // mark a task to star or undo
     const hendleUpdateStar = async (taskId) => {
         let res = await ToggleStarTask(taskId);
         if (!res.isSuccess) {
@@ -69,6 +84,7 @@ export function useTaskEvents() {
         }
     };
 
+    // mark complete or uncomplete a task
     const handleCompleteTask = async (taskId, isComplete = true) => {
         const res = await GetTaskById(taskId);
         if (res.isSuccess) {
@@ -77,6 +93,7 @@ export function useTaskEvents() {
         }
     };
 
+    // Rename a task
     const handleRenameGroup = async (item) => {
         const result = await SaveGroup(item);
         if (!result.isSuccess) {
@@ -89,18 +106,77 @@ export function useTaskEvents() {
         await updateGroupsTaskList();
     };
 
+    // Delete a goroup 
     const handleDeleteGroup = async (groupId) => {
         const res = await DeleteGroup(groupId);
         if (res.isSuccess) {
             const updatedGroupTaskList = allGroupTaskList.filter(group => group.groupId !== groupId);
             setAllGroupTaskList(updatedGroupTaskList);
-            const updatedTaskGroups = taskGroups.filter(group => group.list !== groupId);
+            const updatedTaskGroups = taskGroups.filter(group => group.listId !== groupId);
             setTaskGroups(updatedTaskGroups);
         } else {
             console.error("error while delete group", res);
         }
     };
 
+    // short task of a perticular group 
+    const handleSort = async (option, groupId) => {
+        const group = await GetGroupById(groupId);
+        const res = await SaveGroup({ ...group.data, sortBy: option });
+        if (!res.isSuccess) {
+            console.log("error while calling api for save group", res);
+            return;
+        }
+
+        await updateTaskLists();
+
+    };
+
+    // handle move task to anothe created group
+    const handleMoveTask = async (taskId, groupId) => {
+        console.log(taskId, groupId);
+        const task = await GetTaskById(taskId);
+        console.log(task);
+
+        if (!task.isSuccess) {
+            console.log("error while getting task for move to another group ", res);
+            return;
+        }
+        const res = await SaveTask({ ...task.data, taskGroupId: groupId });
+        if (!res.isSuccess) {
+            console.log("error while moving task to another group ", res);
+            return;
+        }
+
+        await updateTaskLists();
+    }
+
+    // set task id to move a new group and show model 
+    const handleShowModelToMoveTaskToNewList = (taskId) => {
+        setTaskIdToMoveNewGroup(taskId);
+        setShowAddorEditGroupModel(true);
+    }
+
+    // move task to a new list handler 
+    const handleMoveTaskToNewList = async (taskId, groupItem) => {
+        console.log(taskId, groupItem);
+        if (taskId === 0) {
+            console.error("taskId is 0, can't move task");
+            return;
+        }
+
+        var res = await MoveTaskToNewGroup(taskId, groupItem);
+        if (!res.isSuccess) {
+            console.error("error while moving task to new group ", res);
+            return;
+        }
+
+        setTaskIdToMoveNewGroup(0);
+        await updateGroups();
+        await updateTaskLists();
+    }
+
+    // Refresh groups task list 
     const updateGroupsTaskList = async () => {
         const res = await GetAllGroupsTaskList();
         if (res.isSuccess) {
@@ -110,6 +186,15 @@ export function useTaskEvents() {
         }
     };
 
+    // Refresh group List 
+    const updateGroups = async () => {
+        const allGroups = await GetAllGroupList();
+        if (allGroups.data && allGroups.data.length > 0) {
+            setTaskGroups(allGroups.data);
+        }
+    };
+
+    // Refresh groups task list and starred task list 
     const updateTaskLists = async () => {
         const res = await GetAllGroupsTaskList();
         if (res.isSuccess) {
@@ -124,22 +209,15 @@ export function useTaskEvents() {
             console.error("Failed or unexpected response:", starredTask.message, starredTask.data);
         }
     };
-    const handleSort = async (option, groupId) => {
-        const group = await GetGroupById(groupId);
-        const res = await SaveGroup({ ...group.data, sortBy: option });
-        if (!res.isSuccess) {
-            console.log("error while calling api for save group", res);
-            return;
-        }
-
-        await updateTaskLists();
-
-    };
-
     return {
+        //states
         showAddorEditTaskModel, setShowAddorEditTaskModel,
         taskIdForEdit, setTaskIdForEdit,
         gorupIdForAddTask, setGorupIdForAddTask,
+        showAddorEditGroupModel, setShowAddorEditGroupModel,
+        taskIdToMoveNewGroup, setTaskIdToMoveNewGroup,
+        hideSidebar, setHideSidebar,
+        //handlers
         hendleEditTask,
         handleAddTask,
         hendleAddOrEdit,
@@ -148,14 +226,19 @@ export function useTaskEvents() {
         handleCompleteTask,
         handleRenameGroup,
         handleDeleteGroup,
+        handleMoveTaskToNewList,
+        handleShowModelToMoveTaskToNewList,
+        handleSort,
+        handleMoveTask,
         updateGroupsTaskList,
+        updateGroups,
         updateTaskLists,
+        //context values
         allGroupTaskList,
         setAllGroupTaskList,
         allStarredTasks,
         setallStarredTasks,
         taskGroups,
-        setTaskGroups,
-        handleSort
+        setTaskGroups
     };
 }

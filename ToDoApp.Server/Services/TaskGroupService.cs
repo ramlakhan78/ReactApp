@@ -7,7 +7,7 @@ using static ToDoApp.Server.Contracts.IBaseRepository;
 
 namespace ToDoApp.Server.Services
 {
-    public class TaskGroupService(IBaseRepository<TaskGroup> taskGroupRepo) : ITaskGroupService
+    public class TaskGroupService(IBaseRepository<TaskGroup> taskGroupRepo, IBaseRepository<TasksDto> taskRepo) : ITaskGroupService
     {
         public async Task<ResponseModel> GetTaskGroupsAsync()
         {
@@ -73,6 +73,19 @@ namespace ToDoApp.Server.Services
             ResponseModel response = new();
             try
             {
+                var res = await taskRepo.GetAllAsync().ConfigureAwait(false);
+                var taskList = res.Where(x => x.TaskGroupId == id)?.ToList();
+                foreach (var item in taskList)
+                {
+                    try
+                    {
+                        await taskRepo.DeleteAsync(item.TaskId);
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
+
                 await taskGroupRepo.DeleteAsync(id);
                 response.IsSuccess = true;
                 response.Message = "Task Group deleted successfully";
