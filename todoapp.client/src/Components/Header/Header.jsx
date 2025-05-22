@@ -6,9 +6,9 @@ const Header = () => {
     console.log(hideSidebar);
     return (
         <div className="header">
-            <div className="row d-flex justify-content-center text-left" onClick={() => setHideSidebar(!hideSidebar)}>
+            <div className="row d-flex justify-content-center text-left" >
                 <div className="col-1">
-                    <SquareMenu className="squaremenu-btn"  />
+                    <SquareMenu className="squaremenu-btn" onClick={() => setHideSidebar(!hideSidebar)} />
                 </div>
                 <div className="col-11 text-end">
                     <p> RAMLAKHAN'S TO DO APP </p>

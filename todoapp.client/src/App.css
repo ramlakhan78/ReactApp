@@ -331,6 +331,8 @@ body {
 
             .main .content .task-scroll-container .task-scroll .task-card .task-card-body .row input[type=radio] {
                 cursor: pointer;
+                width: 78px;
+                height: 38px;
             }
 
         .main .content .task-scroll-container .task-scroll .task-card .task-card-body .task-details {
