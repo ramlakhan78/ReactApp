@@ -1,3 +1,1 @@
-E:\Ramlakhan\React Project\ToDoApp\todoapp.client\obj\Debug\todoapp.client.esproj.CoreCompileInputs.cache
-E:\Ramlakhan\React Project\ReactApp\todoapp.client\obj\Debug\todoapp.client.esproj.CoreCompileInputs.cache
-E:\React Project\ReactApp\todoapp.client\obj\Debug\todoapp.client.esproj.CoreCompileInputs.cache
+E:\Ramlakhan\React Project\react-exercise\RamLakhan\ToDoApp\todoapp.client\obj\Debug\todoapp.client.esproj.CoreCompileInputs.cache

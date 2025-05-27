@@ -1,11 +1,10 @@
 ﻿using ToDoApp.Server.Contracts;
 using ToDoApp.Server.Models;
 using ToDoApp.Server.Models.Entity;
-using static ToDoApp.Server.Contracts.IBaseRepository;
 
 namespace ToDoApp.Server.Services;
 
-public class TaskService(IBaseRepository<TasksDto> taskRepo, IBaseRepository<TaskGroup> taskGroupRepo) : ITaskService
+public class TaskService(IBaseRepository<Models.Entity.Task> taskRepo, IBaseRepository<TaskGroup> taskGroupRepo) : ITaskService
 {
     public async Task<ResponseModel> GetAllTaskAsync()
     {
@@ -32,15 +31,15 @@ public class TaskService(IBaseRepository<TasksDto> taskRepo, IBaseRepository<Tas
             var result = await taskRepo.GetByIdAsync(id);
             response.Data = new
             {
-                TaskId = result?.TaskId,
-                Title = result?.Title,
-                Description = result?.Description,
+                result?.TaskId,
+                result?.Title,
+                result?.Description,
                 ToDoDate = result?.ToDoDate != null ? result?.ToDoDate?.ToString("yyyy-MM-dd") : null,
-                CreateDate = result?.CreateDate,
-                CompleteDate = result?.CompleteDate,
-                IsStarred = result?.IsStarred,
-                IsCompleted = result?.IsCompleted,
-                TaskGroupId = result?.TaskGroupId
+                result?.CreateDate,
+                result?.CompleteDate,
+                result?.IsStarred,
+                result?.IsCompleted,
+                result?.TaskGroupId
             };
 
 
@@ -54,13 +53,15 @@ public class TaskService(IBaseRepository<TasksDto> taskRepo, IBaseRepository<Tas
         return response;
     }
 
-    public async Task<ResponseModel> AddOrUpdateTaskAsync(TasksDto task)
+    public async Task<ResponseModel> AddOrUpdateTaskAsync(int id, Models.Entity.Task task)
     {
         ResponseModel response = new();
         try
         {
-            if (task.TaskId == 0)
+            // ToDo: fix this.
+            if (id == 0)
             {
+                task.TaskId = 0;
                 task.CompleteDate = null;
                 task.CreateDate = DateTime.Now;
                 await taskRepo.AddAsync(task);
@@ -68,6 +69,7 @@ public class TaskService(IBaseRepository<TasksDto> taskRepo, IBaseRepository<Tas
             }
             else
             {
+                task.TaskId = id;
                 if (task.IsCompleted)
                     task.CompleteDate = DateTime.Now;
                 else
@@ -102,39 +104,12 @@ public class TaskService(IBaseRepository<TasksDto> taskRepo, IBaseRepository<Tas
         return response;
     }
 
-    public async Task<ResponseModel> GetAllTaskByGroupId(int groupId)
-    {
-        ResponseModel response = new();
-        try
-        {
-            var groupDetail = await taskGroupRepo.GetByIdAsync(groupId);
-            var taskList = await taskRepo.QueryAsync("SELECT * FROM Task WHERE TaskGroupId = @0", groupId);
-
-            response = new ResponseModel
-            {
-                IsSuccess = true,
-                Data = new GroupTaskListVM
-                {
-                    GroupId = groupDetail.ListId,
-                    GroupName = groupDetail.ListName,
-                    TaskList = taskList.Where(x => !x.IsCompleted).ToList() ?? new(),
-                    CompletedTaskList = taskList.Where(x => x.IsCompleted).ToList() ?? new()
-                }
-            };
-        }
-        catch (Exception ex)
-        {
-            response.IsSuccess = false;
-            response.Message = ex.Message;
-        }
-        return response;
-    }
-
     public async Task<ResponseModel> GetAllGroupWithTaskListAsync()
     {
         ResponseModel response = new();
         try
         {
+            // ToDo: fix this.
             var groupList = await taskGroupRepo.GetAllAsync();
             var taskList = await taskRepo.GetAllAsync();
             response.Data = groupList.Select(group => new GroupTaskListVM
@@ -167,18 +142,17 @@ public class TaskService(IBaseRepository<TasksDto> taskRepo, IBaseRepository<Tas
         try
         {
             var task = await taskRepo.GetByIdAsync(taskId);
-            if (task != null)
-            {
-                task.IsStarred = !task.IsStarred;
-                await taskRepo.UpdateAsync(task);
-                response.IsSuccess = true;
-                response.Message = "Task starred status updated successfully";
-            }
-            else
+            if (task == null)
             {
                 response.IsSuccess = false;
                 response.Message = "Task not found";
+                return response;
             }
+
+            task.IsStarred = !task.IsStarred;
+            await taskRepo.UpdateAsync(task);
+            response.IsSuccess = true;
+            response.Message = "Task starred status updated successfully";
         }
         catch (Exception ex)
         {
@@ -194,13 +168,15 @@ public class TaskService(IBaseRepository<TasksDto> taskRepo, IBaseRepository<Tas
         ResponseModel response = new();
         try
         {
+            // ToDo: fix this.
             var group = await taskGroupRepo.GetByIdAsync(1).ConfigureAwait(false);
             var starredTasks = await taskRepo.GetAllAsync().ConfigureAwait(false);
             response.Data = new GroupTaskListVM
             {
                 GroupId = group.ListId,
-                GroupName = "starred tasks",
+                GroupName = "Starred tasks",
                 SortBy = group.SortBy,
+                isEnableShow = true,
                 TaskList = starredTasks.Where(x => x.IsStarred && !x.IsCompleted)
                                    .OrderBy(x => group.SortBy == "Title" ? x.Title :
                                    group.SortBy == "Date" ? x.ToDoDate.ToString() :
@@ -223,6 +199,7 @@ public class TaskService(IBaseRepository<TasksDto> taskRepo, IBaseRepository<Tas
         ResponseModel response = new();
         try
         {
+            // ToDo: @0 why parameter name is 0 or 1
             var completedTasks = await taskRepo.QueryAsync("Select * from Task where TaskGroupId =@0 and IsCompleted =1", groupId).ConfigureAwait(false);
             foreach (var task in completedTasks)
             {
@@ -232,6 +209,7 @@ public class TaskService(IBaseRepository<TasksDto> taskRepo, IBaseRepository<Tas
                 }
                 catch (Exception)
                 {
+                    // ToDo handle error
                 }
             }
             response.IsSuccess = true;
@@ -250,15 +228,17 @@ public class TaskService(IBaseRepository<TasksDto> taskRepo, IBaseRepository<Tas
         ResponseModel response = new();
         try
         {
-            await taskGroupRepo.AddAsync(group);
             var task = await taskRepo.GetByIdAsync(taskId).ConfigureAwait(false);
-
             if (task == null)
             {
                 response.IsSuccess = false;
                 response.Message = "Task not found";
                 return response;
             }
+
+            await taskGroupRepo.AddAsync(group);
+            // ToDo: handle error
+            if(group.ListId == 0) return response;
 
             task.TaskGroupId = group.ListId;
             await taskRepo.UpdateAsync(task);

@@ -13,8 +13,6 @@ function App() {
         <BrowserRouter>
             <MyContextProvider>
                 <Routes>
-                    {/*<Route path="/" element={ <Layout></Layout> } />*/}
-
                     <Route path="/" element={ <Layout> <Dashboard /> </Layout>} />
 
                     <Route path="/starred" element={ <Layout> <Starred /> </Layout>} />
