@@ -1,48 +1,74 @@
 // src/api/taskGroupApi.jsx
 
-const BASE_URL = '/TaskGroups';
+const BASE_URL = '/api/TaskGroups';
 
-export const SaveGroup = async (item) => {
-    const response = await fetch(`${BASE_URL}/save-group`, {
+export const GetGroups = async () => {
+    const response = await fetch(`${BASE_URL}`);
+    return await response.json();
+};
+
+export const AddGroup = async (item) => {
+    const response = await fetch(`${BASE_URL}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(item),
     });
+    return await response.json();
 
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    return response.json();
 };
 
-export const GetAllGroupList = async () => {
-    const response = await fetch(`${BASE_URL}/task-group-list`);
+export const UpdateGroup = async (id, item) => {
+    const response = await fetch(`${BASE_URL}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(item),
+    });
 
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
+    return await response.json();;
 
-    return response.json();
 };
 
 export const GetGroupById = async (id) => {
     const response = await fetch(`${BASE_URL}/${id}`);
+    return await response.json();
 
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    return response.json();
 };
 
 export const DeleteGroup = async (id) => {
-    const response = await fetch(`${BASE_URL}/delete/${id}`, {
+    const response = await fetch(`${BASE_URL}/${id}`, {
         method: 'DELETE',
     });
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return response.json();
+    return await response.json();
+
 }
 
+export const GetGroupsTaskList = async () => {
+    const response = await fetch(`${BASE_URL}/tasks`);
+    return await response.json();
+
+}
+
+export const GetStarredTask = async () => {
+    const response = await fetch(`${BASE_URL}/tasks/star`);
+    return await response.json();
+
+};
+
+export const DeleteCompletedTask = async (groupId) => {
+    const response = await fetch(`${BASE_URL}/${groupId}/complete`,
+        { method: 'DELETE' });
+    return await response.json();
+
+};
+
+export const UpdateGroupVisibility = async (groupId, isVisible) => {
+    const response = await fetch(`${BASE_URL}/${groupId}/visibility/${isVisible}`,
+        { method: 'PATCH' });
+        return await response.json();
+};
+
+export const UpdateSortBy = async (groupId, sortBy) => {
+    const response = await fetch(`${BASE_URL}/${groupId}/sortBy/${sortBy}`,
+        { method: 'PATCH' });
+        return await response.json();
+};

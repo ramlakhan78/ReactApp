@@ -47,15 +47,15 @@ export default defineConfig({
     },
     server: {
         proxy: {
-            '^/weatherforecast': {
+            '^/api/TaskGroups': {
                 target,
                 secure: false
             },
-            '^/TaskGroups': {
+            '^/api/Tasks': {
                 target,
                 secure: false
             },
-            '^/Tasks': {
+            '^/api/SubTasks': {
                 target,
                 secure: false
             }

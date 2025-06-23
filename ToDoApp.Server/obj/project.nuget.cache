@@ -1,12 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "9bWdseOtOT8=",
+  "dgSpecHash": "uKBoZRQKeXc=",
   "success": true,
-  "projectFilePath": "E:\\Ramlakhan\\React Project\\ReactApp\\ToDoApp.Server\\ToDoApp.Server.csproj",
+  "projectFilePath": "E:\\Ramlakhan\\Git Repos\\Learn React projects\\todo-app\\ToDoApp.Server\\ToDoApp.Server.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\s5\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\s5\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",
-    "C:\\Users\\s5\\.nuget\\packages\\microsoft.aspnetcore.spaproxy\\8.0.16\\microsoft.aspnetcore.spaproxy.8.0.16.nupkg.sha512",
+    "C:\\Users\\s5\\.nuget\\packages\\microsoft.aspnetcore.spaproxy\\8.0.17\\microsoft.aspnetcore.spaproxy.8.0.17.nupkg.sha512",
     "C:\\Users\\s5\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\1.1.1\\microsoft.bcl.asyncinterfaces.1.1.1.nupkg.sha512",
     "C:\\Users\\s5\\.nuget\\packages\\microsoft.bcl.cryptography\\8.0.0\\microsoft.bcl.cryptography.8.0.0.nupkg.sha512",
     "C:\\Users\\s5\\.nuget\\packages\\microsoft.data.sqlclient\\6.0.2\\microsoft.data.sqlclient.6.0.2.nupkg.sha512",

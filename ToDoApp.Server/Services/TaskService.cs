@@ -1,276 +1,252 @@
 ﻿using ToDoApp.Server.Contracts;
 using ToDoApp.Server.Models;
 using ToDoApp.Server.Models.Entity;
-using static ToDoApp.Server.Contracts.IBaseRepository;
 
 namespace ToDoApp.Server.Services;
 
-public class TaskService(IBaseRepository<TasksDto> taskRepo, IBaseRepository<TaskGroup> taskGroupRepo) : ITaskService
+public class TaskService(IBaseRepository<Models.Entity.Task> taskRepo, IBaseRepository<TaskGroup> taskGroupRepo, IBaseRepository<SubTask> subTaskRepo) : ITaskService
 {
     public async Task<ResponseModel> GetAllTaskAsync()
     {
-        ResponseModel response = new();
+        // Fetch all tasks from the repository
+        var tasks = await taskRepo.GetAllAsync();
+        if (tasks == null || !tasks.Any())
+        {
+            return new ResponseModel
+            {
+                IsSuccess = false,
+                Message = "No tasks found"
+            };
+        }
 
-        try
+        var subTasks = await subTaskRepo.GetAllAsync();
+        // Map the tasks to a list of TaskListVM
+        var data = tasks.Select(task => new TaskListVM
         {
-            response.Data = await taskRepo.GetAllAsync();
-            response.IsSuccess = true;
-        }
-        catch (Exception ex)
+            TaskId = task.TaskId,
+            Title = task.Title,
+            Description = task.Description,
+            ToDoDate = task.ToDoDate,
+            CreateDate = task.CreateDate,
+            CompleteDate = task.CompleteDate,
+            IsStarred = task.IsStarred,
+            IsCompleted = task.IsCompleted,
+            TaskGroupId = task.TaskGroupId,
+            SubTasks = subTasks != null && subTasks.Count() > 0 ? subTasks.Where(SubTask => SubTask.TaskId == task.TaskId).ToList() : null
+        }).ToList();
+
+        return new()
         {
-            response.IsSuccess = false;
-            response.Message = ex.Message;
-        }
-        return response;
+            Data = data,
+            IsSuccess = true
+        };
     }
 
     public async Task<ResponseModel> GetTaskByIdAsync(int id)
     {
         ResponseModel response = new();
-        try
+        var result = await taskRepo.GetByIdAsync(id).ConfigureAwait(false);
+        response.Data = new
         {
-            var result = await taskRepo.GetByIdAsync(id);
-            response.Data = new
-            {
-                TaskId = result?.TaskId,
-                Title = result?.Title,
-                Description = result?.Description,
-                ToDoDate = result?.ToDoDate != null ? result?.ToDoDate?.ToString("yyyy-MM-dd") : null,
-                CreateDate = result?.CreateDate,
-                CompleteDate = result?.CompleteDate,
-                IsStarred = result?.IsStarred,
-                IsCompleted = result?.IsCompleted,
-                TaskGroupId = result?.TaskGroupId
-            };
-
-
-            response.IsSuccess = true;
-        }
-        catch (Exception ex)
+            result.TaskId,
+            result.Title,
+            result.Description,
+            ToDoDate = result.ToDoDate != null ? result.ToDoDate?.ToString("yyyy-MM-dd") : null,
+            result.CreateDate,
+            result.CompleteDate,
+            result.IsStarred,
+            result.IsCompleted,
+            result.TaskGroupId,
+            SubTasks = await subTaskRepo.GetAllAsync() is var subTasks && subTasks != null && subTasks.Count() > 0
+                ? subTasks.Where(subTask => subTask.TaskId == result.TaskId).ToList()
+                : null
+        };
+        response.IsSuccess = result != null;
+        if (!response.IsSuccess)
         {
-            response.IsSuccess = false;
-            response.Message = ex.Message;
+            response.Message = "Task not found";
         }
         return response;
     }
 
-    public async Task<ResponseModel> AddOrUpdateTaskAsync(TasksDto task)
+    public async Task<ResponseModel> AddTaskAsync(AddTaskRequestModel model)
     {
         ResponseModel response = new();
-        try
+        await taskRepo.AddAsync(new Models.Entity.Task
         {
-            if (task.TaskId == 0)
-            {
-                task.CompleteDate = null;
-                task.CreateDate = DateTime.Now;
-                await taskRepo.AddAsync(task);
-                response.Message = "task added successfully!!";
-            }
-            else
-            {
-                if (task.IsCompleted)
-                    task.CompleteDate = DateTime.Now;
-                else
-                    task.CompleteDate = null;
-                await taskRepo.UpdateAsync(task);
-                response.Message = "task updated successfully!!";
-            }
-            response.IsSuccess = true;
-        }
-        catch (Exception ex)
+            Title = model.Title,
+            Description = model.Description,
+            ToDoDate = model.ToDoDate,
+            IsStarred = model.IsStarred,
+            IsCompleted = false,
+            TaskGroupId = model.TaskGroupId,
+            CreateDate = DateTime.Now
+        });
+        response.Message = "task added successfully!!";
+        response.IsSuccess = true;
+        return response;
+    }
+
+    public async Task<ResponseModel> UpdateTaskAsync(int id, UpdateTaskRequestModel model)
+    {
+        ResponseModel response = new();
+        var task = await taskRepo.GetByIdAsync(id).ConfigureAwait(false);
+        if (task == null)
         {
             response.IsSuccess = false;
-            response.Message = ex.Message;
+            response.Message = "Task not found";
+            return response;
         }
+
+        task.Title = model.Title;
+        task.Description = model.Description;
+        task.ToDoDate = model.ToDoDate;
+        if (task.IsCompleted)
+            task.CompleteDate = DateTime.Now;
+        else
+            task.CompleteDate = null;
+
+        await taskRepo.UpdateAsync(task);
+        response.Message = "task updated successfully!!";
+        response.IsSuccess = true;
         return response;
     }
 
     public async Task<ResponseModel> DeleteAsync(int id)
     {
-        ResponseModel response = new();
-        try
+        var task = await taskRepo.GetByIdAsync(id).ConfigureAwait(false);
+        if (task == null)
         {
-            await taskRepo.DeleteAsync(id);
-            response.IsSuccess = true;
-            response.Message = "Task deleted successfully";
-        }
-        catch (Exception ex)
-        {
-            response.IsSuccess = false;
-            response.Message = ex.Message;
-        }
-        return response;
-    }
-
-    public async Task<ResponseModel> GetAllTaskByGroupId(int groupId)
-    {
-        ResponseModel response = new();
-        try
-        {
-            var groupDetail = await taskGroupRepo.GetByIdAsync(groupId);
-            var taskList = await taskRepo.QueryAsync("SELECT * FROM Task WHERE TaskGroupId = @0", groupId);
-
-            response = new ResponseModel
+            return new ResponseModel
             {
-                IsSuccess = true,
-                Data = new GroupTaskListVM
-                {
-                    GroupId = groupDetail.ListId,
-                    GroupName = groupDetail.ListName,
-                    TaskList = taskList.Where(x => !x.IsCompleted).ToList() ?? new(),
-                    CompletedTaskList = taskList.Where(x => x.IsCompleted).ToList() ?? new()
-                }
+                IsSuccess = false,
+                Message = "Task not found"
             };
         }
-        catch (Exception ex)
-        {
-            response.IsSuccess = false;
-            response.Message = ex.Message;
-        }
-        return response;
-    }
 
-    public async Task<ResponseModel> GetAllGroupWithTaskListAsync()
-    {
-        ResponseModel response = new();
-        try
+        // Delete all subtasks associated with the task
+        var subTasks = await subTaskRepo.QueryAsync().Where(x => x.TaskId == id).ToList();
+        if (subTasks != null && subTasks.Any())
         {
-            var groupList = await taskGroupRepo.GetAllAsync();
-            var taskList = await taskRepo.GetAllAsync();
-            response.Data = groupList.Select(group => new GroupTaskListVM
+            var subTaskIdsForDelete = subTasks.Select(x => x.SubTaskId).ToList();
+
+            try
             {
-                GroupId = group.ListId,
-                GroupName = group.ListName,
-                SortBy = group.SortBy,
-                isEnableShow = group.IsEnableShow,
-                TaskList = taskList.Where(x => x.TaskGroupId == group.ListId && !x.IsCompleted)
-                                   .OrderBy(x => group.SortBy == "Title" ? x.Title :
-                                   group.SortBy == "Date" ? x.ToDoDate.ToString() :
-                                   group.SortBy == "Description" ? x.Description :
-                                   x.TaskId.ToString()).ToList(),
-                CompletedTaskList = taskList.Where(x => x.TaskGroupId == group.ListId && x.IsCompleted).ToList()
-            }).ToList();
-            response.IsSuccess = true;
-        }
-        catch (Exception ex)
-        {
-            response.IsSuccess = false;
-            response.Message = ex.Message;
+                await subTaskRepo.ExecuteSqlAsync($"DELETE FROM SubTask WHERE SubTaskId IN ({string.Join(",", subTaskIdsForDelete)})");
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
-        return response;
+        await taskRepo.DeleteAsync(id);
+        return new()
+        {
+            IsSuccess = true,
+            Message = "Task deleted successfully"
+        };
     }
 
     public async Task<ResponseModel> ToggleStarTaskAsync(int taskId)
     {
         ResponseModel response = new();
-        try
-        {
-            var task = await taskRepo.GetByIdAsync(taskId);
-            if (task != null)
-            {
-                task.IsStarred = !task.IsStarred;
-                await taskRepo.UpdateAsync(task);
-                response.IsSuccess = true;
-                response.Message = "Task starred status updated successfully";
-            }
-            else
-            {
-                response.IsSuccess = false;
-                response.Message = "Task not found";
-            }
-        }
-        catch (Exception ex)
+        var task = await taskRepo.GetByIdAsync(taskId);
+        if (task == null)
         {
             response.IsSuccess = false;
-            response.Message = ex.Message;
+            response.Message = "Task not found";
+            return response;
         }
+
+        task.IsStarred = !task.IsStarred;
+        await taskRepo.UpdateAsync(task);
+        response.IsSuccess = true;
+        response.Message = "Task starred status updated successfully";
+
         return response;
 
     }
 
-    public async Task<ResponseModel> GetStarredTaskAsync()
+    public async Task<ResponseModel> UpdateTaskCompletionStatusAsync(int taskId)
     {
         ResponseModel response = new();
-        try
-        {
-            var group = await taskGroupRepo.GetByIdAsync(1).ConfigureAwait(false);
-            var starredTasks = await taskRepo.GetAllAsync().ConfigureAwait(false);
-            response.Data = new GroupTaskListVM
-            {
-                GroupId = group.ListId,
-                GroupName = "starred tasks",
-                SortBy = group.SortBy,
-                TaskList = starredTasks.Where(x => x.IsStarred && !x.IsCompleted)
-                                   .OrderBy(x => group.SortBy == "Title" ? x.Title :
-                                   group.SortBy == "Date" ? x.ToDoDate.ToString() :
-                                   group.SortBy == "Description" ? x.Description :
-                                   x.TaskId.ToString()).ToList(),
-                CompletedTaskList = []
-            };
-            response.IsSuccess = true;
-        }
-        catch (Exception ex)
+        var task = await taskRepo.GetByIdAsync(taskId).ConfigureAwait(false);
+        if (task == null)
         {
             response.IsSuccess = false;
-            response.Message = ex.Message;
+            response.Message = "Task not found";
+            return response;
         }
+
+        if (!task.IsCompleted)
+        {
+            var subTasks = await subTaskRepo.QueryAsync().Where(x => x.TaskId == taskId && !x.IsCompleted).ToList();
+            if (subTasks != null && subTasks.Count > 0)
+            {
+                var subTaskIds = subTasks.Select(x => x.SubTaskId).ToList();
+                var query = $"Update SubTask Set IsCompleted=1, CompleteDate=@CompleteDate where SubTaskId IN ({string.Join(",", subTaskIds)})";
+                await subTaskRepo.ExecuteSqlAsync(query, new { CompleteDate = DateTime.Now });
+            }
+        }
+
+        task.IsCompleted = !task.IsCompleted;
+        if (task.IsCompleted)
+            task.CompleteDate = DateTime.Now;
+        else
+            task.CompleteDate = null;
+        await taskRepo.UpdateAsync(task);
+        response.IsSuccess = true;
+        response.Message = "Task completion status updated successfully";
         return response;
     }
 
-    public async Task<ResponseModel> DeleteCompletedTaskAsync(int groupId)
+    public async Task<ResponseModel> MoveTaskToExistingGroupAsync(int taskId, int groupId)
     {
         ResponseModel response = new();
-        try
-        {
-            var completedTasks = await taskRepo.QueryAsync("Select * from Task where TaskGroupId =@0 and IsCompleted =1", groupId).ConfigureAwait(false);
-            foreach (var task in completedTasks)
-            {
-                try
-                {
-                    await taskRepo.DeleteAsync(task.TaskId);
-                }
-                catch (Exception)
-                {
-                }
-            }
-            response.IsSuccess = true;
-            response.Message = "Completed tasks deleted successfully";
-        }
-        catch (Exception ex)
+
+        var task = await taskRepo.GetByIdAsync(taskId).ConfigureAwait(false);
+        if (task == null)
         {
             response.IsSuccess = false;
-            response.Message = ex.Message;
+            response.Message = "Task not found";
+            return response;
         }
+        var group = await taskGroupRepo.GetByIdAsync(groupId).ConfigureAwait(false);
+        if (group == null)
+        {
+            response.IsSuccess = false;
+            response.Message = "Task group not found";
+            return response;
+        }
+        task.TaskGroupId = groupId;
+        await taskRepo.UpdateAsync(task);
+        response.IsSuccess = true;
+        response.Message = "Task moved to existing group successfully";
         return response;
     }
 
-    public async Task<ResponseModel> MoveTaskToNewList(int taskId, TaskGroup group)
+    public async Task<ResponseModel> MoveTaskToNewGroup(int taskId, AddGroupRequestModel model)
     {
         ResponseModel response = new();
-        try
-        {
-            await taskGroupRepo.AddAsync(group);
-            var task = await taskRepo.GetByIdAsync(taskId).ConfigureAwait(false);
 
-            if (task == null)
-            {
-                response.IsSuccess = false;
-                response.Message = "Task not found";
-                return response;
-            }
-
-            task.TaskGroupId = group.ListId;
-            await taskRepo.UpdateAsync(task);
-            response.IsSuccess = true;
-            response.Message = "Task moved to new group successfully";
-
-        }
-        catch (Exception ex)
+        var task = await taskRepo.GetByIdAsync(taskId).ConfigureAwait(false);
+        if (task == null)
         {
             response.IsSuccess = false;
-            response.Message = ex.Message;
+            response.Message = "Task not found";
+            return response;
         }
+
+        var group = new TaskGroup { GroupName = model.GroupName, IsEnableShow = true, SortBy = "My order" };
+
+        await taskGroupRepo.AddAsync(group);
+        task.TaskGroupId = group.GroupId;
+        await taskRepo.UpdateAsync(task);
+        response.IsSuccess = true;
+        response.Message = "Task moved to new group successfully";
+
         return response;
     }
 }

@@ -1,6 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
-import { GetAllGroupList } from '../api/TaskGroupApi';
-import { GetAllGroupsTaskList, GetStarredTask } from '@/api/TaskApi';
+import React, { createContext, useEffect, useState } from 'react';
 
 export const Context = createContext();
 
@@ -8,41 +6,72 @@ export const MyContextProvider = ({ children }) => {
     const [taskGroups, setTaskGroups] = useState([]);
     const [allGroupTaskList, setAllGroupTaskList] = useState([]);
     const [allStarredTasks, setallStarredTasks] = useState({});
-    const [hideSidebar, setHideSidebar] = useState(false);
+    const [sidebarShow, setSidebarShow] = useState(true);
+    const [unfoldable, setUnfoldable] = useState(false);
+    const [theme, setTheme] = useState('light');
+    const [searchTerm, setSearchTerm] = useState("")
+    const [searchedTask, setSearchedTask] = useState([])
 
+    // global task search
     useEffect(() => {
-        (async () => {
-            await getAllGroups();
-            await getAllGroupsTask();
-            await getStarredTask();
-        })();
-    }, []);
+        if (searchTerm?.trim()) {
+            let filteredGroupTasks = allGroupTaskList
+                .map(groupWithTask => {
+                    const filteredTask = groupWithTask.taskList?.filter(x =>
+                        (x.title && x.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                        (x.description && x.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                        (x.subTasks && x.subTasks.some(subTask =>
+                            (subTask.title && subTask.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                            (subTask.description && subTask.description.toLowerCase().includes(searchTerm.toLowerCase()))
+                        ))
+                    );
 
-    const getStarredTask = async () => {
-        const res = await GetStarredTask();
-        if (res.isSuccess) {
-            setallStarredTasks(res.data);
+                    const filteredCompletedTask = groupWithTask.completedTaskList?.filter(x =>
+                        (x.title && x.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                        (x.description && x.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                        (x.subTasks && x.subTasks.some(subTask =>
+                            (subTask.title && subTask.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                            (subTask.description && subTask.description.toLowerCase().includes(searchTerm.toLowerCase()))
+                        ))
+                    );
+
+                    // Check if the group name matches the search term  
+                    const isGroupNameMatch = groupWithTask.groupName?.toLowerCase().includes(searchTerm.toLowerCase());
+
+                    // Include the group if either the group name matches or it has filtered tasks  
+                    if (isGroupNameMatch || (filteredTask && filteredTask.length > 0) || (filteredCompletedTask && filteredCompletedTask.length > 0)) {
+                        return { ...groupWithTask, taskList: filteredTask, completedTaskList: filteredCompletedTask };
+                    }
+
+                    return null;
+                })
+                .filter(groupWithTask => groupWithTask !== null); // Exclude null groups  
+
+            console.log(filteredGroupTasks);
+            setSearchedTask(filteredGroupTasks);
         }
-    };
 
-    const getAllGroups = async () => {
-        const res = await GetAllGroupList();
-        if (res.isSuccess) {
-            setTaskGroups(res.data);
-        }
-    };
-
-    const getAllGroupsTask = async () => {
-        const res = await GetAllGroupsTaskList();
-        if (res.isSuccess) {
-            setAllGroupTaskList(res.data);
-        } else {
-            console.error("Failed or unexpected response:", res.message, res.data);
-        }
-    };
-
+    }, [allGroupTaskList, searchTerm])
     return (
-        <Context.Provider value={{ taskGroups, setTaskGroups, allGroupTaskList, setAllGroupTaskList, allStarredTasks, setallStarredTasks, hideSidebar, setHideSidebar }}>
+        <Context.Provider
+            value={{
+                theme,
+                setTheme,
+                sidebarShow,
+                setSidebarShow,
+                unfoldable,
+                setUnfoldable,
+                taskGroups,
+                setTaskGroups,
+                allGroupTaskList,
+                setAllGroupTaskList,
+                allStarredTasks,
+                setallStarredTasks,
+                searchedTask,
+                setSearchedTask,
+                searchTerm,
+                setSearchTerm
+            }}>
             {children}
         </Context.Provider>
     );
